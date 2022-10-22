@@ -1,0 +1,15 @@
+---
+name: Lint (YAML)
+on:
+  pull_request:
+    types: [opened, synchronize]
+    paths: ["**.ya?ml"]
+
+jobs:
+  yamllint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@e2f20e631ae6d7dd3b768f56a5d2af784dd54791
+      - uses: ibiqlik/action-yamllint@2576378a8e339169678f9939646ee3ee325e845c
+        with:
+          format: github
