@@ -64,6 +64,25 @@ spec:
               kubectl --namespace {{ $.Release.Namespace }} get secret --selector certs.belug-apps.io/group="ix-portal" --output yaml | \
                 sed '/namespace/d' | \
                 kubectl --kubeconfig "${kconfig}" --namespace kubeapps-system apply --filename - || exit 0 # fails if nothing to import
+          resources:
+            limits:
+              memory: 50Mi
+            requests:
+              cpu: 20m
+              memory: 50Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+          volumeMounts:
+            - mountPath: /tmp
+              name: temp
 
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       serviceAccountName: vc-{{ $.Release.Name }}
+      volumes:
+        - name: temp
+          emptyDir: {}
 {{- end }}

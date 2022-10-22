@@ -40,5 +40,24 @@ spec:
               )
               token=$(kubectl --namespace {{ .Release.Namespace }} get secret ${secret_token} --output go-template="{{ "{{ .data.token | base64decode }}" }}")
               kubectl --namespace {{ .Release.Namespace }} patch configmap/portal --type merge --patch '{"data":{"path":"/#/login?token='$token'"}}'
+          resources:
+            limits:
+              memory: 50Mi
+            requests:
+              cpu: 20m
+              memory: 50Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+          volumeMounts:
+            - mountPath: /tmp
+              name: temp
 
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       serviceAccountName: vc-{{ .Release.Name }}
+      volumes:
+        - name: temp
+          emptyDir: {}
