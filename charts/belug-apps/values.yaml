@@ -1,3 +1,5 @@
+# yamllint disable rule:line-length
+---
 # Default vcluster configuration for TrueNAS
 vcluster:
   # Virtual Cluster (k3s) configuration
@@ -238,13 +240,13 @@ vcluster:
             enabled: true
             hostname: {{ .Values.ix_portal.main.host }}
             path: {{ .Values.ix_portal.main.path }}
-          
+
             extraHosts:
             {{- range .Values.ix_portal.extraHosts }}
               - name: .host
                 path: .path
             {{- end }}
-          
+
             annotations:
               traefik.ingress.kubernetes.io/router.entrypoints: {{ .Values.ix_portal.entrypoint }}
               {{- if .Values.ix_portal.middlewares }}

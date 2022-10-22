@@ -1,10 +1,11 @@
 ---
 name: Security hardening (Github Actions workflows)
-on:
+on:  # yamllint disable-line rule:truthy
   pull_request:
     types: [opened, synchronize]
     paths: [".github/workflows/**"]
 
 jobs:
   ci_harden_security:
+    # yamllint disable-line rule:line-length
     uses: xunleii/github-actions-grimoire/.github/workflows/security.workflows.yaml@117c2a4eae36183464cd513cae3936644ebe0f88
