@@ -1,0 +1,14 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: portal
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+data:
+  protocol: https
+  host: "{{ .Values.vcluster.ix_portal.main.host }}"
+  port: "{{ (lookup "v1" "ConfigMap" "default" "portalhook").data.websecure | default "" }}"

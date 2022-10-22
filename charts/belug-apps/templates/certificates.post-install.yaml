@@ -1,0 +1,69 @@
+{{- $ := . }}
+{{- if $.Values.ixCertificates }}
+{{- range $id, $cert := $.Values.ixCertificates }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ printf "%v-tls-ixcert-%v" $.Release.Name $id }}
+  namespace: {{ $.Release.Namespace }}
+  labels:
+    app.kubernetes.io/managed-by: {{ $.Release.Service | quote }}
+    app.kubernetes.io/instance: {{ $.Release.Name | quote }}
+    app.kubernetes.io/version: {{ $.Chart.Version | quote }}
+    helm.sh/chart: "{{ $.Chart.Name }}-{{ $.Chart.Version }}"
+    certs.belug-apps.io/group: "ix-portal"
+type: kubernetes.io/tls
+stringData:
+  tls.crt: {{ $cert.certificate | quote }}
+  tls.key: {{ $cert.privatekey | quote }}
+{{- end }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: sync-portal-ix-certificates
+  namespace: {{ $.Release.Namespace }}
+  labels:
+    app.kubernetes.io/managed-by: {{ $.Release.Service | quote }}
+    app.kubernetes.io/instance: {{ $.Release.Name | quote }}
+    helm.sh/chart: "{{ $.Chart.Name }}-{{ $.Chart.Version }}"
+spec:
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/managed-by: {{ $.Release.Service | quote }}
+        app.kubernetes.io/instance: {{ $.Release.Name | quote }}
+        helm.sh/chart: "{{ $.Chart.Name }}-{{ $.Chart.Version }}"
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: sync-portal-ix-certificates
+          image: bitnami/kubectl:1.22.15@sha256:ab57d76e0748cef274e19cf6bdeabd07094b1928958e4cddb1e65d3fe0b8942e
+          command: [ /bin/bash,-c ]
+          args:
+            - |
+              while ! kubectl --namespace {{ $.Release.Namespace }} get secret vc-{{ $.Release.Name }} > /dev/null; do
+                echo "Waiting the vc-{{ $.Release.Name }} secret to be created."
+                sleep 5
+              done
+              sleep 5 # just to be sure that all new secret has been updated
+
+              # Generate kubeconfig for the vcluster
+              export kconfig=$(mktemp)
+              (
+                kubectl --namespace {{ $.Release.Namespace }} get secret vc-{{ $.Release.Name }} --output go-template="{{ "{{ .data.config | base64decode }}" }}" |
+                sed 's/localhost:8443/{{ $.Release.Name }}:443/g'
+              ) > "${kconfig}"
+
+              # Clean old certificates (previous revision)
+              kubectl --kubeconfig "${kconfig}" --namespace {{ $.Release.Namespace }} delete secret --selector certs.belug-apps.io/group="ix-portal"
+
+              # Sync new certificates
+              kubectl --kubeconfig "${kconfig}" create namespace kubeapps-system
+              kubectl --namespace {{ $.Release.Namespace }} get secret --selector certs.belug-apps.io/group="ix-portal" --output yaml | \
+                sed '/namespace/d' | \
+                kubectl --kubeconfig "${kconfig}" --namespace kubeapps-system apply --filename - || exit 0 # fails if nothing to import
+
+      serviceAccountName: vc-{{ $.Release.Name }}
+{{- end }}

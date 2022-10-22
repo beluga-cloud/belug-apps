@@ -1,0 +1,44 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: configure-truenas-portal
+  labels:
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    app.kubernetes.io/version: {{ .Chart.Version | quote }}
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    metadata:
+      name: {{ .Release.Name }}-configure-truenas-portal
+      labels:
+        app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+        app.kubernetes.io/instance: {{ .Release.Name | quote }}
+        helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: configure-portal
+          image: bitnami/kubectl:1.22.15@sha256:ab57d76e0748cef274e19cf6bdeabd07094b1928958e4cddb1e65d3fe0b8942e
+          command: [ /bin/bash,-c ]
+          args:
+            - |
+              while ! kubectl --namespace {{ .Release.Namespace }} get secret | grep kubeapps-operator-token; do
+                echo "Waiting the kubeapps-operator secret to be created."
+                sleep 5
+              done
+
+              secret_token=$(
+                kubectl --namespace {{ .Release.Namespace }} get secrets |
+                grep kubeapps-operator-token |
+                awk '{ print $1 }'
+              )
+              token=$(kubectl --namespace {{ .Release.Namespace }} get secret ${secret_token} --output go-template="{{ "{{ .data.token | base64decode }}" }}")
+              kubectl --namespace {{ .Release.Namespace }} patch configmap/portal --type merge --patch '{"data":{"path":"/#/login?token='$token'"}}'
+
+      serviceAccountName: vc-{{ .Release.Name }}

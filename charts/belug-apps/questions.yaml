@@ -1,0 +1,405 @@
+groups:
+  - name: vcluster Configuration
+    description: vcluster Configuration
+  - name: Synced Resources
+    description: Synced Resources
+  - name: KubeApps Portal
+    description: KubeApps Portal
+
+portals:
+  open:
+    protocols:
+      - "$kubernetes-resource_configmap_portal_protocol"
+    host:
+      - "$kubernetes-resource_configmap_portal_host"
+    ports:
+      - "$kubernetes-resource_configmap_portal_port"
+    path: "$kubernetes-resource_configmap_portal_path"
+
+questions:
+  - variable: vcluster
+    label: VCluster Configuration
+    group: vcluster Configuration
+    schema:
+      additional_attrs: true
+      type: dict
+      attrs:
+        - variable: vcluster
+          label: Container Configuration
+          schema:
+            additional_attrs: true
+            type: dict
+            attrs:
+              - variable: image
+                label: K3s Image
+                description: |
+                  You can find the k3s release on their
+                  <a href="https://github.com/k3s-io/k3s/releases">Github</a>.
+                schema:
+                  type: string
+                  default: rancher/k3s:v1.25.3-rc1-k3s1 # TODO: manage this value with Renovate (+ handle patch)
+                  required: true
+              - variable: ixAdvExtraArgs
+                label: Set Custom Extra Arguments
+                schema:
+                  type: boolean
+                  default: false
+                  show_subquestions_if: true
+                  subquestions:
+                    - variable: extraArgs
+                      label: Extra Arguments
+                      description: |
+                        Extra arguments for k3s. Make sure the service-cidr is the exact service cidr of the host cluster.</br>
+                        If this does not match, you won't be able to create services within the vcluster. You can find out the
+                        service cidr of the host cluster by creating a service with a not allowed ClusterIP in the host cluster.
+                      schema:
+                        type: list
+                        default: [ ]
+                        items:
+                          - variable: arg
+                            label: Argument
+                            schema:
+                              type: string
+                              valid_chars: '^--.+$'
+
+        - variable: ix_portal
+          label: KubeApps Portal
+          description: Configure the KubeApps Portal ingress
+          schema:
+            additional_attrs: true
+            type: dict
+            attrs:
+              - variable: main
+                label: Main Host
+                schema:
+                  type: dict
+                  attrs:
+                    - variable: host
+                      label: HostName
+                      schema:
+                        type: string
+                        default: ""
+                        required: true
+                    - variable: path
+                      label: Path
+                      schema:
+                        type: string
+                        default: /
+                        required: true
+
+              - variable: extraHosts
+                label: Extra Hosts
+                schema:
+                  type: list
+                  default: [ ]
+                  items:
+                    - variable: hostEntry
+                      label: Host
+                      schema:
+                        additional_attrs: true
+                        type: dict
+                        attrs:
+                          - variable: host
+                            label: HostName
+                            schema:
+                              type: string
+                              default: ""
+                              required: true
+                          - variable: path
+                            label: Path
+                            schema:
+                              type: string
+                              default: /
+                              required: true
+
+              - variable: tls
+                label: TLS-Settings
+                schema:
+                  type: list
+                  default: [ ]
+                  items:
+                    - variable: tlsEntry
+                      label: Host
+                      schema:
+                        additional_attrs: true
+                        type: dict
+                        attrs:
+                          - variable: hosts
+                            label: Certificate Hosts
+                            schema:
+                              type: list
+                              default: [ ]
+                              items:
+                                - variable: host
+                                  label: Host
+                                  schema:
+                                    type: string
+                                    default: ""
+                                    required: true
+                          - variable: scaleCert
+                            label: Select TrueNAS SCALE Certificate
+                            schema:
+                              type: int
+                              $ref:
+                                - "definitions/certificate"
+              - variable: entrypoint
+                label: (Advanced) Traefik Entrypoint
+                description: Entrypoint used by Traefik when using Traefik as Ingress Provider
+                schema:
+                  type: string
+                  default: websecure
+                  required: true
+              - variable: middlewares
+                label: Traefik Middlewares
+                description: Add previously created Traefik Middlewares to this Ingress
+                schema:
+                  type: list
+                  default: [ ]
+                  items:
+                    - variable: name
+                      label: Name
+                      schema:
+                        type: string
+                        default: ""
+                        required: true
+
+        - variable: sync
+          label: (Advanced) Synced Resources on TrueNAS
+          description: |
+            Lists of resources that can be synced or mirrored by vcluster.<br/>
+            See <a href="https://www.vcluster.com/docs/architecture/synced-resources">Synced Resources</a> for more information.
+          schema:
+            additional_attrs: true
+            type: dict
+            attrs:
+              - variable: nodes
+                label: Nodes
+                description: |
+                  By default, vcluster will create fake nodes for each `spec.nodeName`. If there are no more
+                  pods on a node, the fake node will be deleted (no cluster role for vcluster is needed).<br/>
+                  If you enable Node synchronization, vcluster will copy and sync real nodes information for
+                  each spec.nodeName. If there are no more pods on a node within vcluster, the virtual cluster node
+                  will be deleted.<br/>
+                  See <a href="https://www.vcluster.com/docs/architecture/nodes#node-syncing-modes">Node Syncing Modes</a>
+                  for more information.
+                schema:
+                  additional_attrs: true
+                  type: dict
+                  attrs:
+                    - variable: enabled
+                      label: Sync
+                      schema:
+                        type: boolean
+                        default: false
+                        show_subquestions_if: true
+                        subquestions:
+                          - variable: syncAllNodes
+                            label: Sync All Nodes
+                            description: |
+                              vcluster will always sync all nodes from the host cluster to the vcluster, no matter where pods are running.<br/>
+                              This is useful if you want to use DaemonSets within the vcluster.<br/>
+                              See <a href="https://www.vcluster.com/docs/architecture/nodes#node-syncing-modes">Node Syncing Modes</a>
+                              for more information.
+                            schema: { type: boolean, default: false }
+                          - variable: nodeSelector
+                            label: Node Selector
+                            description: |
+                              Real Nodes Label Selector vcluster will only sync nodes that match the given label selector.<br/>
+                              See <a href="https://www.vcluster.com/docs/architecture/nodes#node-syncing-modes">Node Syncing Modes</a>
+                              for more information.
+                            schema: { type: string, default: "" }
+                          - variable: syncNodeChanges
+                            label: Sync Node Changes
+                            schema: { type: boolean, default: false }
+
+              - variable: persistentvolumes
+                label: PersistentVolumes
+                description: |
+                  By default, creating persistent volumes in the vcluster will have no effect, as vcluster
+                  runs without any cluster scoped access in the host cluster.<br/>
+                  However, if you enable persistentvolumes sync via helm values, the appropriate ClusterRole
+                  will be created in the host cluster and the syncer will be started with a flag that enables
+                  persistent volume synchronization from vcluster down to the underlying host cluster.<br/>
+                  See <a href="https://www.vcluster.com/docs/architecture/storage#sync-persistent-volumes">Sync Persistent Volumes</a>
+                  for more information.
+                schema:
+                  additional_attrs: true
+                  type: dict
+                  attrs:
+                    - variable: enabled
+                      label: Sync
+                      schema: { type: boolean, default: false }
+
+              - variable: networkpolicies
+                label: NetworkPolicies
+                description: |
+                  By default, network policies are disabled because k3s on TrueNAS has network
+                  policies disabled. <br/>
+                  You can enable it if you have enabled network policies.
+                schema:
+                  additional_attrs: true
+                  type: dict
+                  attrs:
+                    - variable: enabled
+                      label: Sync
+                      schema: { type: boolean, default: false }
+
+              - variable: pods
+                label: Pods
+                schema:
+                  additional_attrs: true
+                  type: dict
+                  attrs:
+                    - variable: ephemeralContainers
+                      label: Sync EphemeralContainers
+                      description: |
+                        By default, ephemeral containers are disabled. This kind of container are
+                        usually used for <a href="https://kubernetes.io/docs/tasks/debug/debug-application/debug-running-pod/#ephemeral-container">troubleshooting</a>.<br/>
+                        More information on <a href="https://kubernetes.io/docs/concepts/workloads/pods/ephemeral-containers/">https://kubernetes.io/docs</a>.
+                      schema: { type: boolean, default: false }
+                    - variable: status
+                      label: Sync ReadinessGates
+                      description: |
+                        By default, readiness gates is disabled because is not common to see them on most helm charts.<br/>
+                        More information on <a href="https://kubernetes.io/docs/tasks/debug/debug-application/debug-running-pod/#ephemeral-container">https://kubernetes.io/docs</a>.
+                      schema: { type: boolean, default: false }
+
+              - variable: poddisruptionbudgets
+                label: PodDisruptionBudgets
+                description: |
+                  PDB are disable because they don't really make sense on a single node K8S
+                  cluster.
+                schema:
+                  additional_attrs: true
+                  type: dict
+                  attrs:
+                    - variable: enabled
+                      label: Sync
+                      schema: { type: boolean, default: false }
+
+              - { variable: priorityclasses, label: PriorityClasses, schema: { additional_attrs: true, type: dict, attrs: [ { variable: enabled, label: Sync, schema: { type: boolean, default: false } } ] } }
+              - { variable: legacy-storageclasses, label: StorageClasses (legacy), schema: { additional_attrs: true, type: dict, attrs: [ { variable: enabled, label: Sync, schema: { type: boolean, default: false } } ] } }
+              - { variable: volumesnapshots, label: VolumeSnapshots, schema: { additional_attrs: true, type: dict, attrs: [ { variable: enabled, label: Sync, schema: { type: boolean, default: true } } ] } }
+
+        - variable: isolation
+          label: (Advanced) Virtual Cluster Isolation
+          description: |
+            If enabled will deploy vcluster in an isolated mode with pod security standards, limit ranges and
+            resource quotas.
+          schema:
+            additional_attrs: true
+            type: dict
+            attrs:
+              - variable: enabled
+                label: Enabled
+                schema:
+                  type: boolean
+                  default: false
+                  show_subquestions_if: true
+                  subquestions:
+                    - variable: podSecurityStandard
+                      label: Pod Security Standard
+                      schema:
+                        type: string
+                        default: baseline
+                    - variable: resourceQuota
+                      label: Resource Quota
+                      schema:
+                        type: dict
+                        attrs:
+                          - variable: enabled
+                            label: Enabled
+                            schema:
+                              type: boolean
+                              default: true
+                              show_subquestions_if: true
+                              subquestions:
+                                - variable: quota
+                                  label: Quota
+                                  schema:
+                                    type: dict
+                                    attrs:
+                                      - { variable: requests.cpu, label: Requests CPU, schema: { type: string, valid_chars: "^[0-9]+(?:\\.[0-9]+(?!.*m$)|m?$)", default: "10" } }
+                                      - { variable: requests.memory, label: Requests Memory, schema: { type: string, valid_chars: "^([+-]?[0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$", default: 20Gi } }
+                                      - { variable: requests.storage, label: Requests Storage, schema: { type: string, valid_chars: "^([+-]?[0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$", default: 100Gi } }
+                                      - { variable: requests.ephemeral-storage, label: Requests Ephemeral-storage, schema: { type: string, valid_chars: "^([+-]?[0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$", default: 60Gi } }
+                                      - { variable: limits.cpu, label: Limits CPU, schema: { type: string, valid_chars: "^[0-9]+(?:\\.[0-9]+(?!.*m$)|m?$)", default: "20" } }
+                                      - { variable: limits.memory, label: Limits Memory, schema: { type: string, valid_chars: "^([+-]?[0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$", default: 40Gi } }
+                                      - { variable: limits.storage, label: Requests Storage, schema: { type: string, valid_chars: "^([+-]?[0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$", default: 100Gi } }
+                                      - { variable: limits.ephemeral-storage, label: Limits Ephemeral-storage, schema: { type: string, valid_chars: "^([+-]?[0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$", default: 160Gi } }
+                                      - { variable: services.nodeports, label: Services Nodeports, schema: { type: int, default: 0 } }
+                                      - { variable: services.loadbalancers, label: Services Loadbalancers, schema: { type: int, default: 1 } }
+                                      - { variable: count/endpoints, label: Count Endpoints, schema: { type: int, default: 40 } }
+                                      - { variable: count/pods, label: Count Pods, schema: { type: int, default: 20 } }
+                                      - { variable: count/services, label: Count Services, schema: { type: int, default: 20 } }
+                                      - { variable: count/secrets, label: Count Secrets, schema: { type: int, default: 100 } }
+                                      - { variable: count/configmaps, label: Count Configmaps, schema: { type: int, default: 100 } }
+                                      - { variable: count/persistentvolumeclaims, label: Count Persistentvolumeclaims, schema: { type: int, default: 20 } }
+
+                    - variable: limitRange
+                      label: Limit Range
+                      schema:
+                        type: dict
+                        attrs:
+                          - variable: enabled
+                            label: Enabled
+                            schema:
+                              type: boolean
+                              default: true
+                              show_subquestions_if: true
+                              subquestions:
+                                - variable: default
+                                  label: Default
+                                  schema:
+                                    type: dict
+                                    attrs:
+                                      - { variable: cpu, label: CPU, schema: { type: string, valid_chars: "^[0-9]+(?:\\.[0-9]+(?!.*m$)|m?$)", default: "1" } }
+                                      - { variable: memory, label: Memory, schema: { type: string, valid_chars: "^([+-]?[0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$", default: 512Mi } }
+                                      - { variable: ephemeral-storage, label: Ephemeral Storage, schema: { type: string, valid_chars: "^([+-]?[0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$", default: 8Gi } }
+                                - variable: defaultRequest
+                                  label: Default Request
+                                  schema:
+                                    type: dict
+                                    attrs:
+                                      - { variable: cpu, label: CPU, schema: { type: string, valid_chars: "^[0-9]+(?:\\.[0-9]+(?!.*m$)|m?$)", default: 100m } }
+                                      - { variable: memory, label: Memory, schema: { type: string, valid_chars: "^([+-]?[0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$", default: 128Mi } }
+                                      - { variable: ephemeral-storage, label: Ephemeral Storage, schema: { type: string, valid_chars: "^([+-]?[0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$", default: 3Gi } }
+
+                    - variable: networkPolicy
+                      label: Network Policy
+                      schema:
+                        type: dict
+                        attrs:
+                          - variable: enabled
+                            label: Enabled
+                            schema:
+                              type: boolean
+                              default: true
+                              show_subquestions_if: true
+                              subquestions:
+                                - variable: outgoingConnections
+                                  label: Outgoing Connections
+                                  schema:
+                                    type: dict
+                                    attrs:
+                                      - variable: ipBlock
+                                        label: IP Block
+                                        schema:
+                                          type: dict
+                                          attrs:
+                                            - variable: cidr
+                                              label: CIDR
+                                              schema:
+                                                type: string
+                                                valid_chars: "^([0-9]{1,3}\\.){3}[0-9]{1,3}\\/([0-9]|[1-2][0-9]|3[0-2])$"
+                                                default: 0.0.0.0/0
+                                            - variable: except
+                                              label: Except
+                                              schema:
+                                                type: list
+                                                items:
+                                                  - variable: exceptEntry
+                                                    label: CIDR
+                                                    schema:
+                                                      type: string
+                                                      valid_chars: "^([0-9]{1,3}\\.){3}[0-9]{1,3}\\/([0-9]|[1-2][0-9]|3[0-2])$"

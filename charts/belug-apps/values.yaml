@@ -1,0 +1,262 @@
+# Default vcluster configuration for TrueNAS
+vcluster:
+  # Virtual Cluster (k3s) configuration
+  vcluster:
+    # NOTE: this is configured directly through the UI
+    resources:
+      limits:
+        memory: 2Gi
+      requests:
+        cpu: 200m
+        memory: 256Mi
+
+  # Resource syncers that should be enabled/disabled.
+  # Enabling syncers will impact RBAC Role and ClusterRole permissions.
+  # To disable a syncer set "enabled: false".
+  # See docs for details - https://www.vcluster.com/docs/architecture/synced-resources
+  # NOTE: all of these values are configured directly through the UI
+  sync:
+    configmaps:
+      enabled: true
+    endpoints:
+      enabled: true
+    events:
+      enabled: true
+    # Node syncing will be in fake mode and cannot be changed because of RBAC requirements to fetch information on
+    # real nodes. Because belug-apps has been made for single node TrueNAS, we don't care about node information.
+    # Read https://www.vcluster.com/docs/architecture/nodes for me details.
+    fake-nodes:
+      enabled: true
+    # Storage syncing will be in fake mode and cannot be changed because of RBAC requirements. This avoids managing
+    # persistent volumes directly instead of using a PVC.
+    # Read https://www.vcluster.com/docs/architecture/storage for more details.
+    fake-persistentvolumes:
+      enabled: true
+    # By default, ingresses are synced to allow using belug-apps next to TrueCharts by sharing the same ingress controller.
+    # You can disable it if you want to use a custom ingress controller.
+    ingresses:
+      enabled: true
+    legacy-storageclasses:
+      enabled: false
+    # By default, network policies are disabled but can be easily activate during the installation.
+    networkpolicies:
+      enabled: false
+    nodes:
+      enableScheduler: false
+      enabled: false
+      nodeSelector: ""
+      syncAllNodes: false
+      syncNodeChanges: false
+    persistentvolumeclaims:
+      enabled: true
+    persistentvolumes:
+      enabled: false
+    # By default, PDB are disable because they don't really make sense on a single node K8S cluster.
+    poddisruptionbudgets:
+      enabled: false
+    pods:
+      enabled: true
+      # By default, ephemeral containers are disabled. This kind of container are usually used for troubleshooting.
+      ephemeralContainers: false
+      status: true
+    priorityclasses:
+      enabled: false
+    secrets:
+      enabled: true
+    serviceaccounts:
+      enabled: false
+    services:
+      enabled: true
+    storageclasses:
+      enabled: true
+    volumesnapshots:
+      enabled: true
+
+  # Configure the ingress resource that allows you to access the vcluster
+  ingress:
+    # Because we cannot directly access to secret from TrueNAS Web UI, using an ingress
+    # to access to the virtual cluster didn't make sense.
+    enabled: false
+
+  # Configure SecurityContext of the containers in the VCluster pod
+  securityContext:
+    capabilities:
+      drop:
+        - all
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    runAsUser: 568
+  fsGroup: 568
+
+  # Storage settings for the vcluster
+  storage:
+    # If this is disabled, vcluster will use an emptyDir instead
+    # of a PersistentVolumeClaim
+    persistence: true
+    # Size of the persistent volume claim
+    size: 5Gi
+
+  # If enabled will deploy vcluster in an isolated mode with pod security
+  # standards, limit ranges and resource quotas
+  isolation:
+    enabled: false
+    namespace: null
+
+    podSecurityStandard: baseline
+
+    resourceQuota:
+      enabled: true
+      quota:
+        requests.cpu: 10
+        requests.memory: 20Gi
+        requests.storage: "100Gi"
+        requests.ephemeral-storage: 60Gi
+        limits.cpu: 20
+        limits.memory: 40Gi
+        limits.ephemeral-storage: 160Gi
+        services.nodeports: 0
+        services.loadbalancers: 1
+        count/endpoints: 40
+        count/pods: 20
+        count/services: 20
+        count/secrets: 100
+        count/configmaps: 100
+        count/persistentvolumeclaims: 20
+      scopeSelector:
+        matchExpressions:
+      scopes:
+
+    limitRange:
+      enabled: true
+      default:
+        ephemeral-storage: 8Gi
+        memory: 512Mi
+        cpu: "1"
+      defaultRequest:
+        ephemeral-storage: 3Gi
+        memory: 128Mi
+        cpu: 100m
+
+    networkPolicy:
+      enabled: true
+      outgoingConnections:
+        ipBlock:
+          cidr: 0.0.0.0/0
+          except:
+            - 100.64.0.0/10
+            - 127.0.0.0/8
+            - 10.0.0.0/8
+            - 172.16.0.0/12
+            - 192.168.0.0/16
+
+  # Initialization of the cluster. This is the main part of this project; this is where
+  # kubeapps is installed.
+  init:
+    manifests: |
+      ---
+    manifestsTemplate: |
+      ---
+      # Manage default StorageClass based on the current Belug-Apps poolname
+      apiVersion: storage.k8s.io/v1
+      kind: StorageClass
+      metadata:
+        annotations:
+          storageclass.kubernetes.io/is-default-class: "true"
+        name: ix-truenas-zfspv-default
+      allowVolumeExpansion: true
+      parameters:
+        fstype: zfs
+        poolname: {{ printf "%s/releases/%s/volumes" ((lookup "storage.k8s.io/v1" "StorageClass" "" "openebs-zfspv-default").parameters.poolname | dir) .Release.Name }}
+        shared: "yes"
+      provisioner: zfs.csi.openebs.io
+      reclaimPolicy: Retain
+      volumeBindingMode: Immediate
+      ---
+      # Manage default user for KubeApps (cluster-admin)
+      apiVersion: v1
+      kind: ServiceAccount
+      metadata:
+        name: kubeapps-operator
+        namespace: default
+        labels:
+          app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+          app.kubernetes.io/instance: {{ .Release.Name | quote }}
+          app.kubernetes.io/version: {{ .Chart.AppVersion }}
+          helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+      ---
+      apiVersion: rbac.authorization.k8s.io/v1
+      kind: ClusterRoleBinding
+      metadata:
+        name: kubeapps-operator
+        labels:
+          app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+          app.kubernetes.io/instance: {{ .Release.Name | quote }}
+          app.kubernetes.io/version: {{ .Chart.AppVersion }}
+          helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+      roleRef:
+        apiGroup: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: cluster-admin
+      subjects:
+        - kind: ServiceAccount
+          name: kubeapps-operator
+          namespace: default
+      ---
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: kubeapps-operator-token
+        namespace: default
+        annotations:
+          kubernetes.io/service-account.name: kubeapps-operator
+          vcluster.loft.sh/force-sync: "true"
+      type: kubernetes.io/service-account-token
+
+    helm:
+      - chart:
+          repo: https://charts.bitnami.com/bitnami
+          name: kubeapps
+          version: 10.3.5
+        release:
+          name: kubeapps
+          namespace: kubeapps-system
+        values: |
+          dashboard:
+            replicaCount: 1
+          frontend:
+            replicaCount: 1
+          kubeappsapis:
+            replicaCount: 1
+
+          postgresql:
+            primary:
+              persistence:
+                enabled: true
+                size: 8Gi
+        valuesTemplate: |
+          ingress:
+            enabled: true
+            hostname: {{ .Values.ix_portal.main.host }}
+            path: {{ .Values.ix_portal.main.path }}
+          
+            extraHosts:
+            {{- range .Values.ix_portal.extraHosts }}
+              - name: .host
+                path: .path
+            {{- end }}
+          
+            annotations:
+              traefik.ingress.kubernetes.io/router.entrypoints: {{ .Values.ix_portal.entrypoint }}
+              {{- if .Values.ix_portal.middlewares }}
+              traefik.ingress.kubernetes.io/router.middlewares: {{ .Values.ix_portal.middlewares | join "," }}
+              {{- end }}
+
+            {{- $ := . }}
+            {{- with .Values.ix_portal.tls }}
+            tls: true
+            extraTls:
+            {{- range . }}
+              - hosts: {{ .hosts | toJson }}
+                secretName: {{ printf "%v-tls-ixcert-%v" $.Release.Name .scaleCert }}
+            {{- end }}
+            {{- end }}
