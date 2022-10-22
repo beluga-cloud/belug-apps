@@ -1,5 +1,5 @@
 ---
-name: Security hardening (Github Actions workflows)
+name: Security (Github Actions workflows)
 on:  # yamllint disable-line rule:truthy
   pull_request:
     types: [opened, synchronize]

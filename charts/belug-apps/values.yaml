@@ -158,6 +158,11 @@ vcluster:
       ---
     manifestsTemplate: |
       ---
+      {{- $ := . -}}
+      {{- $poolname := "" -}}
+      {{- with lookup "storage.k8s.io/v1" "StorageClass" "" "openebs-zfspv-default" }}
+        {{- $poolname := (printf "%s/releases/%s/volumes" .parameters.poolname | dir $.Release.Name) -}}
+      {{- end }}
       # Manage default StorageClass based on the current Belug-Apps poolname
       apiVersion: storage.k8s.io/v1
       kind: StorageClass
@@ -168,7 +173,7 @@ vcluster:
       allowVolumeExpansion: true
       parameters:
         fstype: zfs
-        poolname: {{ printf "%s/releases/%s/volumes" ((lookup "storage.k8s.io/v1" "StorageClass" "" "openebs-zfspv-default").parameters.poolname | dir) .Release.Name }}
+        poolname: {{ $poolname }}
         shared: "yes"
       provisioner: zfs.csi.openebs.io
       reclaimPolicy: Retain
@@ -262,3 +267,10 @@ vcluster:
                 secretName: {{ printf "%v-tls-ixcert-%v" $.Release.Name .scaleCert }}
             {{- end }}
             {{- end }}
+
+  # Additional configuration used by Belug-Apps to manage the access to KubeApps directly
+  # through TrueNAS Scale interface.
+  ix_portal:
+    main:
+      host: kubeapps.local
+      path: /
