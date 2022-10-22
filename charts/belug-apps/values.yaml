@@ -1,3 +1,5 @@
+# yamllint disable rule:line-length
+---
 # Default vcluster configuration for TrueNAS
 vcluster:
   # Virtual Cluster (k3s) configuration
@@ -155,6 +157,7 @@ vcluster:
     manifests: |
       ---
     manifestsTemplate: |
+      {{- $ := . -}}
       ---
       # Manage default StorageClass based on the current Belug-Apps poolname
       apiVersion: storage.k8s.io/v1
@@ -166,7 +169,9 @@ vcluster:
       allowVolumeExpansion: true
       parameters:
         fstype: zfs
-        poolname: {{ printf "%s/releases/%s/volumes" ((lookup "storage.k8s.io/v1" "StorageClass" "" "openebs-zfspv-default").parameters.poolname | dir) .Release.Name }}
+        {{- with lookup "storage.k8s.io/v1" "StorageClass" "" "openebs-zfspv-default" }}
+        poolname: {{ (printf "%s/releases/%s/volumes" (.parameters.poolname | dir) $.Release.Name) }}
+        {{- end }}
         shared: "yes"
       provisioner: zfs.csi.openebs.io
       reclaimPolicy: Retain
@@ -238,13 +243,13 @@ vcluster:
             enabled: true
             hostname: {{ .Values.ix_portal.main.host }}
             path: {{ .Values.ix_portal.main.path }}
-          
+
             extraHosts:
             {{- range .Values.ix_portal.extraHosts }}
               - name: .host
                 path: .path
             {{- end }}
-          
+
             annotations:
               traefik.ingress.kubernetes.io/router.entrypoints: {{ .Values.ix_portal.entrypoint }}
               {{- if .Values.ix_portal.middlewares }}
@@ -260,3 +265,10 @@ vcluster:
                 secretName: {{ printf "%v-tls-ixcert-%v" $.Release.Name .scaleCert }}
             {{- end }}
             {{- end }}
+
+  # Additional configuration used by Belug-Apps to manage the access to KubeApps directly
+  # through TrueNAS Scale interface.
+  ix_portal:
+    main:
+      host: kubeapps.local
+      path: /

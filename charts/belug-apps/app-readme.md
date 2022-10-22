@@ -6,7 +6,7 @@ applications on a Kubernetes cluster. Belug-apps is based on two project:
 `TrueNAS Scale` with some extensions.
 
 **CAUTIONS:**   
-**- This application needs an ingress and an SSL certificate to work properly**  
+**- This application needs Traefik ingress and an SSL certificate to work properly**  
 **- It has not been tested in multi-node mode**
 
 _This TrueNAS charts **not** is supplied by TrueCharts nor ixsystems_

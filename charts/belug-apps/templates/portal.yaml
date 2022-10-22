@@ -11,4 +11,6 @@ metadata:
 data:
   protocol: https
   host: "{{ .Values.vcluster.ix_portal.main.host }}"
-  port: "{{ (lookup "v1" "ConfigMap" "default" "portalhook").data.websecure | default "" }}"
+  {{- with lookup "v1" "ConfigMap" "default" "portalhook" }}
+  port: "{{ .data.websecure | default "" }}"
+  {{- end }}

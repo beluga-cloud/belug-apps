@@ -1,3 +1,5 @@
+# yamllint disable rule:line-length
+---
 groups:
   - name: vcluster Configuration
     description: vcluster Configuration
@@ -37,7 +39,7 @@ questions:
                   <a href="https://github.com/k3s-io/k3s/releases">Github</a>.
                 schema:
                   type: string
-                  default: rancher/k3s:v1.25.3-rc1-k3s1 # TODO: manage this value with Renovate (+ handle patch)
+                  default: rancher/k3s:v1.25.3-rc1-k3s1  # TODO: manage this value with Renovate (+ handle patch)
                   required: true
               - variable: ixAdvExtraArgs
                 label: Set Custom Extra Arguments
@@ -54,7 +56,7 @@ questions:
                         service cidr of the host cluster by creating a service with a not allowed ClusterIP in the host cluster.
                       schema:
                         type: list
-                        default: [ ]
+                        default: []
                         items:
                           - variable: arg
                             label: Argument
@@ -91,7 +93,7 @@ questions:
                 label: Extra Hosts
                 schema:
                   type: list
-                  default: [ ]
+                  default: []
                   items:
                     - variable: hostEntry
                       label: Host
@@ -116,7 +118,7 @@ questions:
                 label: TLS-Settings
                 schema:
                   type: list
-                  default: [ ]
+                  default: []
                   items:
                     - variable: tlsEntry
                       label: Host
@@ -128,7 +130,7 @@ questions:
                             label: Certificate Hosts
                             schema:
                               type: list
-                              default: [ ]
+                              default: []
                               items:
                                 - variable: host
                                   label: Host
@@ -154,7 +156,7 @@ questions:
                 description: Add previously created Traefik Middlewares to this Ingress
                 schema:
                   type: list
-                  default: [ ]
+                  default: []
                   items:
                     - variable: name
                       label: Name
@@ -200,17 +202,17 @@ questions:
                               This is useful if you want to use DaemonSets within the vcluster.<br/>
                               See <a href="https://www.vcluster.com/docs/architecture/nodes#node-syncing-modes">Node Syncing Modes</a>
                               for more information.
-                            schema: { type: boolean, default: false }
+                            schema: {type: boolean, default: false}
                           - variable: nodeSelector
                             label: Node Selector
                             description: |
                               Real Nodes Label Selector vcluster will only sync nodes that match the given label selector.<br/>
                               See <a href="https://www.vcluster.com/docs/architecture/nodes#node-syncing-modes">Node Syncing Modes</a>
                               for more information.
-                            schema: { type: string, default: "" }
+                            schema: {type: string, default: ""}
                           - variable: syncNodeChanges
                             label: Sync Node Changes
-                            schema: { type: boolean, default: false }
+                            schema: {type: boolean, default: false}
 
               - variable: persistentvolumes
                 label: PersistentVolumes
@@ -228,7 +230,7 @@ questions:
                   attrs:
                     - variable: enabled
                       label: Sync
-                      schema: { type: boolean, default: false }
+                      schema: {type: boolean, default: false}
 
               - variable: networkpolicies
                 label: NetworkPolicies
@@ -242,7 +244,7 @@ questions:
                   attrs:
                     - variable: enabled
                       label: Sync
-                      schema: { type: boolean, default: false }
+                      schema: {type: boolean, default: false}
 
               - variable: pods
                 label: Pods
@@ -256,13 +258,13 @@ questions:
                         By default, ephemeral containers are disabled. This kind of container are
                         usually used for <a href="https://kubernetes.io/docs/tasks/debug/debug-application/debug-running-pod/#ephemeral-container">troubleshooting</a>.<br/>
                         More information on <a href="https://kubernetes.io/docs/concepts/workloads/pods/ephemeral-containers/">https://kubernetes.io/docs</a>.
-                      schema: { type: boolean, default: false }
+                      schema: {type: boolean, default: false}
                     - variable: status
                       label: Sync ReadinessGates
                       description: |
                         By default, readiness gates is disabled because is not common to see them on most helm charts.<br/>
                         More information on <a href="https://kubernetes.io/docs/tasks/debug/debug-application/debug-running-pod/#ephemeral-container">https://kubernetes.io/docs</a>.
-                      schema: { type: boolean, default: false }
+                      schema: {type: boolean, default: false}
 
               - variable: poddisruptionbudgets
                 label: PodDisruptionBudgets
@@ -275,11 +277,11 @@ questions:
                   attrs:
                     - variable: enabled
                       label: Sync
-                      schema: { type: boolean, default: false }
+                      schema: {type: boolean, default: false}
 
-              - { variable: priorityclasses, label: PriorityClasses, schema: { additional_attrs: true, type: dict, attrs: [ { variable: enabled, label: Sync, schema: { type: boolean, default: false } } ] } }
-              - { variable: legacy-storageclasses, label: StorageClasses (legacy), schema: { additional_attrs: true, type: dict, attrs: [ { variable: enabled, label: Sync, schema: { type: boolean, default: false } } ] } }
-              - { variable: volumesnapshots, label: VolumeSnapshots, schema: { additional_attrs: true, type: dict, attrs: [ { variable: enabled, label: Sync, schema: { type: boolean, default: true } } ] } }
+              - {variable: priorityclasses, label: PriorityClasses, schema: {additional_attrs: true, type: dict, attrs: [{variable: enabled, label: Sync, schema: {type: boolean, default: false}}]}}
+              - {variable: legacy-storageclasses, label: StorageClasses (legacy), schema: {additional_attrs: true, type: dict, attrs: [{variable: enabled, label: Sync, schema: {type: boolean, default: false}}]}}
+              - {variable: volumesnapshots, label: VolumeSnapshots, schema: {additional_attrs: true, type: dict, attrs: [{variable: enabled, label: Sync, schema: {type: boolean, default: true}}]}}
 
         - variable: isolation
           label: (Advanced) Virtual Cluster Isolation
@@ -319,22 +321,22 @@ questions:
                                   schema:
                                     type: dict
                                     attrs:
-                                      - { variable: requests.cpu, label: Requests CPU, schema: { type: string, valid_chars: "^[0-9]+(?:\\.[0-9]+(?!.*m$)|m?$)", default: "10" } }
-                                      - { variable: requests.memory, label: Requests Memory, schema: { type: string, valid_chars: "^([+-]?[0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$", default: 20Gi } }
-                                      - { variable: requests.storage, label: Requests Storage, schema: { type: string, valid_chars: "^([+-]?[0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$", default: 100Gi } }
-                                      - { variable: requests.ephemeral-storage, label: Requests Ephemeral-storage, schema: { type: string, valid_chars: "^([+-]?[0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$", default: 60Gi } }
-                                      - { variable: limits.cpu, label: Limits CPU, schema: { type: string, valid_chars: "^[0-9]+(?:\\.[0-9]+(?!.*m$)|m?$)", default: "20" } }
-                                      - { variable: limits.memory, label: Limits Memory, schema: { type: string, valid_chars: "^([+-]?[0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$", default: 40Gi } }
-                                      - { variable: limits.storage, label: Requests Storage, schema: { type: string, valid_chars: "^([+-]?[0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$", default: 100Gi } }
-                                      - { variable: limits.ephemeral-storage, label: Limits Ephemeral-storage, schema: { type: string, valid_chars: "^([+-]?[0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$", default: 160Gi } }
-                                      - { variable: services.nodeports, label: Services Nodeports, schema: { type: int, default: 0 } }
-                                      - { variable: services.loadbalancers, label: Services Loadbalancers, schema: { type: int, default: 1 } }
-                                      - { variable: count/endpoints, label: Count Endpoints, schema: { type: int, default: 40 } }
-                                      - { variable: count/pods, label: Count Pods, schema: { type: int, default: 20 } }
-                                      - { variable: count/services, label: Count Services, schema: { type: int, default: 20 } }
-                                      - { variable: count/secrets, label: Count Secrets, schema: { type: int, default: 100 } }
-                                      - { variable: count/configmaps, label: Count Configmaps, schema: { type: int, default: 100 } }
-                                      - { variable: count/persistentvolumeclaims, label: Count Persistentvolumeclaims, schema: { type: int, default: 20 } }
+                                      - {variable: requests.cpu, label: Requests CPU, schema: {type: string, valid_chars: "^[0-9]+(?:\\.[0-9]+(?!.*m$)|m?$)", default: "10"}}
+                                      - {variable: requests.memory, label: Requests Memory, schema: {type: string, valid_chars: "^([+-]?[0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$", default: 20Gi}}
+                                      - {variable: requests.storage, label: Requests Storage, schema: {type: string, valid_chars: "^([+-]?[0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$", default: 100Gi}}
+                                      - {variable: requests.ephemeral-storage, label: Requests Ephemeral-storage, schema: {type: string, valid_chars: "^([+-]?[0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$", default: 60Gi}}
+                                      - {variable: limits.cpu, label: Limits CPU, schema: {type: string, valid_chars: "^[0-9]+(?:\\.[0-9]+(?!.*m$)|m?$)", default: "20"}}
+                                      - {variable: limits.memory, label: Limits Memory, schema: {type: string, valid_chars: "^([+-]?[0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$", default: 40Gi}}
+                                      - {variable: limits.storage, label: Requests Storage, schema: {type: string, valid_chars: "^([+-]?[0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$", default: 100Gi}}
+                                      - {variable: limits.ephemeral-storage, label: Limits Ephemeral-storage, schema: {type: string, valid_chars: "^([+-]?[0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$", default: 160Gi}}
+                                      - {variable: services.nodeports, label: Services Nodeports, schema: {type: int, default: 0}}
+                                      - {variable: services.loadbalancers, label: Services Loadbalancers, schema: {type: int, default: 1}}
+                                      - {variable: count/endpoints, label: Count Endpoints, schema: {type: int, default: 40}}
+                                      - {variable: count/pods, label: Count Pods, schema: {type: int, default: 20}}
+                                      - {variable: count/services, label: Count Services, schema: {type: int, default: 20}}
+                                      - {variable: count/secrets, label: Count Secrets, schema: {type: int, default: 100}}
+                                      - {variable: count/configmaps, label: Count Configmaps, schema: {type: int, default: 100}}
+                                      - {variable: count/persistentvolumeclaims, label: Count Persistentvolumeclaims, schema: {type: int, default: 20}}
 
                     - variable: limitRange
                       label: Limit Range
@@ -353,17 +355,17 @@ questions:
                                   schema:
                                     type: dict
                                     attrs:
-                                      - { variable: cpu, label: CPU, schema: { type: string, valid_chars: "^[0-9]+(?:\\.[0-9]+(?!.*m$)|m?$)", default: "1" } }
-                                      - { variable: memory, label: Memory, schema: { type: string, valid_chars: "^([+-]?[0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$", default: 512Mi } }
-                                      - { variable: ephemeral-storage, label: Ephemeral Storage, schema: { type: string, valid_chars: "^([+-]?[0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$", default: 8Gi } }
+                                      - {variable: cpu, label: CPU, schema: {type: string, valid_chars: "^[0-9]+(?:\\.[0-9]+(?!.*m$)|m?$)", default: "1"}}
+                                      - {variable: memory, label: Memory, schema: {type: string, valid_chars: "^([+-]?[0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$", default: 512Mi}}
+                                      - {variable: ephemeral-storage, label: Ephemeral Storage, schema: {type: string, valid_chars: "^([+-]?[0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$", default: 8Gi}}
                                 - variable: defaultRequest
                                   label: Default Request
                                   schema:
                                     type: dict
                                     attrs:
-                                      - { variable: cpu, label: CPU, schema: { type: string, valid_chars: "^[0-9]+(?:\\.[0-9]+(?!.*m$)|m?$)", default: 100m } }
-                                      - { variable: memory, label: Memory, schema: { type: string, valid_chars: "^([+-]?[0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$", default: 128Mi } }
-                                      - { variable: ephemeral-storage, label: Ephemeral Storage, schema: { type: string, valid_chars: "^([+-]?[0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$", default: 3Gi } }
+                                      - {variable: cpu, label: CPU, schema: {type: string, valid_chars: "^[0-9]+(?:\\.[0-9]+(?!.*m$)|m?$)", default: 100m}}
+                                      - {variable: memory, label: Memory, schema: {type: string, valid_chars: "^([+-]?[0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$", default: 128Mi}}
+                                      - {variable: ephemeral-storage, label: Ephemeral Storage, schema: {type: string, valid_chars: "^([+-]?[0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$", default: 3Gi}}
 
                     - variable: networkPolicy
                       label: Network Policy

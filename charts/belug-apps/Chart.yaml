@@ -1,11 +1,14 @@
+---
 apiVersion: v2
 name: belug-apps
-description: Belug-apps is a simple chart that allows every TrueNAS users to install and manage natively Kubernetes apps on TrueNAS Scale.
+description: |
+  Belug-apps is a simple chart that allows every TrueNAS users to install and
+  manage natively Kubernetes apps on TrueNAS Scale.
 version: 0.0.1
 appVersion: 0.12.1
 home: https://github.com/belug-apps
 icon: https://github.com/belug-apps/belug-apps/raw/main/assets/logo_400px.png
-keywords: # kubeapps + vcluster + truenas keywords
+keywords:  # kubeapps + vcluster + truenas keywords
   - cluster
   - dashboard
   - deployment
@@ -27,8 +30,8 @@ dependencies:
     version: 0.12.1
     repository: https://charts.loft.sh
 maintainers:
-- email: xunleii@users.noreply.github.com
-  name: xunleii
+  - email: xunleii@users.noreply.github.com
+    name: xunleii
 sources:
   - https://github.com/belug-apps/belug-apps
   - https://github.com/vmware-tanzu/kubeapps/
