@@ -19,6 +19,6 @@ jobs:
           iac_version: v3
           sarif_upload: true
       # yamllint disable-line rule:line-length
-      - uses: github/codeql-action/upload-sarif@c6c7d293ca64d6a7e953b9680a26c5ffea86a392
+      - uses: github/codeql-action/upload-sarif@40542d38bc4936c2ca7da883aeb050a6081b4b31
         with:
           sarif_file: terrascan.sarif
