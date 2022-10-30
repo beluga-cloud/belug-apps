@@ -11,5 +11,13 @@
     ":renovatePrefix",
     ":combinePatchMinorReleases",
     ":separateMultipleMajorReleases"
+  ],
+  "packageRules": [
+    {
+      "matchManagers": ["github-actions"],
+      "matchUpdateTypes": ["minor", "patch", "digest"],
+      "groupName": "github-actions",
+      "groupSlug": "github-actions"
+    }
   ]
 }
