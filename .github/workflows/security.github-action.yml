@@ -7,4 +7,4 @@ on:  # yamllint disable-line rule:truthy
 
 jobs:
   ci_harden_security:
-    uses: xunleii/github-actions-grimoire/.github/workflows/security.workflows.yaml@117c2a4eae36183464cd513cae3936644ebe0f88
+    uses: xunleii/github-actions-grimoire/.github/workflows/security.workflows.yaml@0ab2cd93e86642397ecdfb2da1e5b97594ab9905
