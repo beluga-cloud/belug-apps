@@ -9,8 +9,8 @@ jobs:
   yamllint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@e2f20e631ae6d7dd3b768f56a5d2af784dd54791
-      - uses: ibiqlik/action-yamllint@2576378a8e339169678f9939646ee3ee325e845c
+      - uses: actions/checkout@e2f20e631ae6d7dd3b768f56a5d2af784dd54791  # tag=v2.5.0
+      - uses: ibiqlik/action-yamllint@2576378a8e339169678f9939646ee3ee325e845c  # tag=v3.1.1
         with:
           format: github
           config_data: '{extends: default, ignore: "**/templates/*.yaml"}'
