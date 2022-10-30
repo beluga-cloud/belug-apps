@@ -11,5 +11,5 @@
     ":renovatePrefix",
     ":combinePatchMinorReleases",
     ":separateMultipleMajorReleases"
-  ],
+  ]
 }
