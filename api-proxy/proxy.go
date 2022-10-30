@@ -44,8 +44,8 @@ const (
 
 func ProxyAction(log *zap.Logger) cli.ActionFunc {
 	return func(ctx *cli.Context) error {
-		truenasToken := ctx.String("token")
-		truenasURL, err := url.Parse(ctx.String("url"))
+		truenasToken := ctx.String("truenas.token")
+		truenasURL, err := url.Parse(ctx.String("truenas.url"))
 		if err != nil {
 			return err
 		}
@@ -62,7 +62,7 @@ func ProxyAction(log *zap.Logger) cli.ActionFunc {
 		log.Info(fmt.Sprintf("setup reverse proxy to %s", truenasURL.String()))
 		proxy := httputil.NewSingleHostReverseProxy(truenasURL)
 		proxy.Transport = http.DefaultTransport
-		if ctx.Bool("insecure") {
+		if ctx.Bool("tls.insecure") {
 			log.Warn("insecure mode enabled; all communication between TrueNAS and API will not be encrypted")
 			proxy.Transport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 		}
@@ -71,6 +71,7 @@ func ProxyAction(log *zap.Logger) cli.ActionFunc {
 		//		 to only handle route that we need for Belug-Apps
 		r := mux.NewRouter()
 		r.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) { w.WriteHeader(http.StatusUnauthorized) })
+		r.MethodNotAllowedHandler = r.NotFoundHandler
 
 		r.Use(func(handler http.Handler) http.Handler { return handlers.CombinedLoggingHandler(os.Stdout, handler) })
 		r.Use(func(handler http.Handler) http.Handler {
@@ -136,16 +137,16 @@ func ProxyAction(log *zap.Logger) cli.ActionFunc {
 
 		// NOTE: here is where all required paths are allowed
 		r.Methods(http.MethodGet).
-			Path("/api-proxy/v2.0/pool").
+			Path("/api/v2.0/pool").
 			HandlerFunc(proxy.ServeHTTP)
 		r.Methods(http.MethodGet).
-			Path("/api-proxy/v2.0/pool/dataset").
+			Path("/api/v2.0/pool/dataset").
 			HandlerFunc(proxy.ServeHTTP)
 		r.Methods(http.MethodPost).
-			Path("/api-proxy/v2.0/filesystem/listdir").
+			Path("/api/v2.0/filesystem/listdir").
 			HandlerFunc(proxy.ServeHTTP)
 
 		log.Info(fmt.Sprintf("start API on %s", ctx.String("listen")))
-		return http.ListenAndServe(ctx.String("listen"), r)
+		return http.ListenAndServe(ctx.String("listen.addr"), r)
 	}
 }

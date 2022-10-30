@@ -22,10 +22,10 @@ func main() {
 		Name:  "belug-apps API proxy",
 		Usage: "TrueNAS API proxy with only required paths enabled, for security reason",
 		Flags: []cli.Flag{
-			&cli.StringFlag{Name: "listen", Aliases: []string{"l"}, Usage: "Address to listen on", Value: "localhost:8080", EnvVars: []string{"LISTEN_ADDR"}},
-			&cli.StringFlag{Name: "url", Usage: "TrueNAS address", Required: true, EnvVars: []string{"TRUENAS_HOST"}},
-			&cli.StringFlag{Name: "token", Usage: "TrueNAS API token", Required: true, EnvVars: []string{"TRUENAS_TOKEN"}},
-			&cli.BoolFlag{Name: "insecure", Aliases: []string{"k"}, Usage: "Allow insecure server connections", Value: false, EnvVars: []string{"TLS_INSECURE"}},
+			&cli.StringFlag{Name: "listen.addr", Usage: "Address to listen on", Value: "localhost:8080", EnvVars: []string{"LISTEN_ADDR"}},
+			&cli.StringFlag{Name: "truenas.url", Usage: "TrueNAS address", Required: true, EnvVars: []string{"TRUENAS_URL"}},
+			&cli.StringFlag{Name: "truenas.token", Usage: "TrueNAS API token", Required: true, EnvVars: []string{"TRUENAS_TOKEN"}},
+			&cli.BoolFlag{Name: "tls.insecure", Usage: "Allow insecure server connections", Value: false, EnvVars: []string{"TLS_INSECURE"}},
 		},
 
 		Action: ProxyAction(log),
