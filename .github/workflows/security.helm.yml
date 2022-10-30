@@ -9,7 +9,7 @@ jobs:
   check_helm_issue:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@e2f20e631ae6d7dd3b768f56a5d2af784dd54791
+      - uses: actions/checkout@1f9a0c22da41e6ebfa534300ef656657ea2c6707
       - uses: tenable/terrascan-action@dd7e921056c6f25b25bff3cf791e063ed7fc3a78
         continue-on-error: true
         with:
