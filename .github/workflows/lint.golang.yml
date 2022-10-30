@@ -9,12 +9,11 @@ jobs:
   golangci:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/setup-go@c4a742cab115ed795e34d4513e2cf7d472deb55f
+      - uses: actions/setup-go@c4a742cab115ed795e34d4513e2cf7d472deb55f  # tag=v3.3.1
         with:
           go-version: 1.19
-      - uses: actions/checkout@e2f20e631ae6d7dd3b768f56a5d2af784dd54791
-      # yamllint disable-line rule:line-length
-      - uses: golangci/golangci-lint-action@07db5389c99593f11ad7b44463c2d4233066a9b1
+      - uses: actions/checkout@e2f20e631ae6d7dd3b768f56a5d2af784dd54791  # tag=v2.5.0
+      - uses: golangci/golangci-lint-action@07db5389c99593f11ad7b44463c2d4233066a9b1  # tag=v3.3.0
         with:
           version: latest
           working-directory: ./api-proxy
@@ -22,15 +21,11 @@ jobs:
   codeql:
     runs-on: ubuntu-latest
     permissions:
-      # required for all workflows
       security-events: write
-
     steps:
-      - uses: actions/checkout@e2f20e631ae6d7dd3b768f56a5d2af784dd54791
-      - uses: github/codeql-action/init@f0a12816612c7306b485a22cb164feb43c6df818
+      - uses: actions/checkout@e2f20e631ae6d7dd3b768f56a5d2af784dd54791  # tag=v2.5.0
+      - uses: github/codeql-action/init@f0a12816612c7306b485a22cb164feb43c6df818  # tag=codeql-bundle-20221024
         with:
           languages: go
-      # yamllint disable-line rule:line-length
-      - uses: github/codeql-action/autobuild@f0a12816612c7306b485a22cb164feb43c6df818
-      # yamllint disable-line rule:line-length
-      - uses: github/codeql-action/analyze@f0a12816612c7306b485a22cb164feb43c6df818
+      - uses: github/codeql-action/autobuild@f0a12816612c7306b485a22cb164feb43c6df818  # tag=codeql-bundle-20221024
+      - uses: github/codeql-action/analyze@f0a12816612c7306b485a22cb164feb43c6df818  # tag=codeql-bundle-20221024

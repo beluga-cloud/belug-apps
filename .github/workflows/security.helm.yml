@@ -9,8 +9,8 @@ jobs:
   check_helm_issue:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@e2f20e631ae6d7dd3b768f56a5d2af784dd54791
-      - uses: tenable/terrascan-action@dd7e921056c6f25b25bff3cf791e063ed7fc3a78
+      - uses: actions/checkout@e2f20e631ae6d7dd3b768f56a5d2af784dd54791  # tag=v2.5.0
+      - uses: tenable/terrascan-action@dd7e921056c6f25b25bff3cf791e063ed7fc3a78  # tag=v1.4.1
         continue-on-error: true
         with:
           find_vulnerabilities: true
@@ -18,7 +18,6 @@ jobs:
           iac_type: helm
           iac_version: v3
           sarif_upload: true
-      # yamllint disable-line rule:line-length
-      - uses: github/codeql-action/upload-sarif@c6c7d293ca64d6a7e953b9680a26c5ffea86a392
+      - uses: github/codeql-action/upload-sarif@c6c7d293ca64d6a7e953b9680a26c5ffea86a392  # tag=codeql-bundle-20221024
         with:
           sarif_file: terrascan.sarif
