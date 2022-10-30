@@ -1,0 +1,22 @@
+---
+name: Security (Golang)
+on:  # yamllint disable-line rule:truthy
+  pull_request:
+    types: [opened, synchronize]
+    paths: ["**.go", "**/go.sum", "**/go.mod"]
+
+jobs:
+  check_golang_issue:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@e2f20e631ae6d7dd3b768f56a5d2af784dd54791
+      - uses: snyk/actions/golang@7fad562681122205233d1242c3bb39598c5393da
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --sarif-file-output=snyk.sarif api-proxy/
+      # yamllint disable-line rule:line-length
+      - uses: github/codeql-action/upload-sarif@f0a12816612c7306b485a22cb164feb43c6df818
+        with:
+          sarif_file: snyk.sarif

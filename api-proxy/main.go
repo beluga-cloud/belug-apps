@@ -16,7 +16,7 @@ func main() {
 			log, _ = zap.NewProduction(zap.IncreaseLevel(level))
 		}
 	}
-	defer log.Sync()
+	defer func() { _ = log.Sync() }()
 
 	app := &cli.App{
 		Name:  "belug-apps API proxy",

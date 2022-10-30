@@ -109,7 +109,7 @@ func ProxyAction(log *zap.Logger) cli.ActionFunc {
 				handler.ServeHTTP(recorder, req)
 
 				// NOTE: we cache responses only TrueNAS respond in more than 500ms
-				if recorder.Code == http.StatusOK && time.Now().Sub(begin) > 500*time.Millisecond {
+				if recorder.Code == http.StatusOK && time.Since(begin) > 500*time.Millisecond {
 					cache.Add(key, &HttpResponseEntry{
 						Header:  recorder.Header(),
 						Body:    recorder.Body.Bytes(),
