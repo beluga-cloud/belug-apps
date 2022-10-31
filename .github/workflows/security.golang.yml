@@ -15,7 +15,7 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          args: --sarif-file-output=snyk.sarif api-proxy/
-      - uses: github/codeql-action/upload-sarif@4fddc51e4f3b5e5e9022f35c3464736cc10e1e98  # tag=codeql-bundle-20221024
+          args: --sarif-file-output=snyk.sarif src/api-proxy/
+      - uses: github/codeql-action/upload-sarif@f0a12816612c7306b485a22cb164feb43c6df818  # tag=codeql-bundle-20221024
         with:
           sarif_file: snyk.sarif

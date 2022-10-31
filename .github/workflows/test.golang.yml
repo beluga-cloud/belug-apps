@@ -14,10 +14,9 @@ jobs:
           go-version: 1.19
       - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
       - run: go test -v -race -coverprofile=coverage.txt -covermode=atomic
-        working-directory: ./api-proxy
-      - run: ls api-proxy
+        working-directory: ./src/api-proxy
       - uses: codecov/codecov-action@d9f34f8cd5cb3b3eb79b3e4b5dae3a16df499a70  # tag=v3.1.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          file: api-proxy/coverage.txt
+          file: src/api-proxy/coverage.txt
           flags: unittests
