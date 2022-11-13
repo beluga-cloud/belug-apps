@@ -7,6 +7,7 @@ module.exports = {
     extensions: ["", ".js", ".jsx", ".ts", ".tsx"],
   },
   externals: {
+    ajv: "ajv",
     react: "react",
     cds_city: "@cds/city",
     cds_core: "@cds/core",
