@@ -67,4 +67,6 @@ export interface CustomParamProps {
 export interface ComponentParamProps {
   param: BelugappsComponentParam;
   onValueChange: (e: any) => void;
+  onError: (e: string) => void;
+  value: any;
 }

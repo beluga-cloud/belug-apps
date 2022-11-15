@@ -17,26 +17,23 @@ export default function CustomComponents({
   param,
   handleBasicFormParamChange,
 }: CustomParamProps) {
+  const [error, setError] = useState<string>('');
   const [isValueModified, setIsValueModified] = useState(false);
-  const [value, setValue] = useState<any>(param.currentValue);
   const [timeout, setThisTimeout] = useState({} as NodeJS.Timeout);
-  console.log(param);
+  const [value, setValue] = useState<any>(param.currentValue);
 
   // NOTE: this is used to keep the value updated if the user changed
   //       something inside the YAML editor.
   useEffect(() => {
-    setValue(param.deployedValue);
-  }, [param.deployedValue]);
+    setValue(param.currentValue);
+  }, [param.currentValue]);
 
-  // NOTE: handleBasicFormParamChange is heavier than expected and we need to
-  //       "debounce" its call (it tooks ~1s on my browser to run...).
+  useEffect(() => {
+    setIsValueModified(Stringify(value) !== Stringify(param.currentValue));
+  }, [value]);
+
   const onValueChange = (update: any) => {
-    setValue(update);
-    setIsValueModified(Stringify(update) !== Stringify(param.currentValue));
-
-    clearTimeout(timeout);
     const func = handleBasicFormParamChange(param);
-
     const event = {
       currentTarget: {
         value: update,
@@ -45,25 +42,42 @@ export default function CustomComponents({
     } as React.FormEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >;
+
+    setValue(update);
+    clearTimeout(timeout);
     setThisTimeout(setTimeout(() => func(event), 500));
+  };
+
+  const renderComponent = (): JSX.Element => {
+    switch (param.customComponent?.type ?? '') {
+      case 'truenas.datasets':
+        return (
+          <DatasetsTreeView
+            param={param.customComponent}
+            onValueChange={onValueChange}
+            onError={(e) => setError(`${e}`)}
+            value={value}
+          ></DatasetsTreeView>
+        );
+      default:
+        setError(
+          `Component "${param.customComponent.type}" is not managed by Belug-Apps extension. Please contact the chart maintainers to fix this issue.`
+        );
+    }
   };
 
   return (
     <>
-      {/* All components are managed here, depending on the given `type` value */}
-      {(param.customComponent?.type ?? '') === 'truenas.datasets' ? (
-        <DatasetsTreeView
-          param={param.customComponent}
-          onValueChange={onValueChange}
-        ></DatasetsTreeView>
+      {error !== '' ? (
+        <CdsControlMessage status="error">{error}</CdsControlMessage>
       ) : (
-        <CdsControlMessage status="error">
-          Component "{param.customComponent.type}" is not managed by Belug-Apps
-          extension.{' '}
-          <b>Please contact the chart maintainers to fix this issue.</b>
-        </CdsControlMessage>
+        <>
+          {renderComponent()}
+          <CdsControlMessage>
+            {isValueModified ? 'Unsaved' : ''}
+          </CdsControlMessage>
+        </>
       )}
-      <CdsControlMessage>{isValueModified ? 'Unsaved' : ''}</CdsControlMessage>
     </>
   );
 }

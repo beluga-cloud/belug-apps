@@ -2,7 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { CdsTree, CdsTreeItem } from '@cds/react/tree-view';
 import { CdsTreeItem as CoreCdsTreeItem } from '@cds/core/tree-view';
 
-type props = { data: TreeItem[]; onSelectedChange?: (e: string) => void };
+type props = {
+  data: TreeItem[];
+  onSelectedChange?: (e: any) => void;
+  value?: any;
+};
 type state = Record<
   string,
   Omit<TreeItem, 'children' | 'lazy'> & {
@@ -10,17 +14,16 @@ type state = Record<
     lazy: () => Promise<state>;
 
     // NOTE: following meta information are used for filtering & rendering
-    _parent?: string;
-    _expandable: boolean;
-    _selected: boolean;
+    parent?: string;
+    expandable: boolean;
   }
 >;
 
 /**
  * Converts a DynamicNode into an exploitable `state` object recursively
  *
- * @param node the node to convert
- * @param parentUid uid of the parent node
+ * @param node - node to convert
+ * @param parentUid - uid of the parent node
  * @returns full state representation of the given node
  */
 function convert(node: TreeItem, parentUid?: string): state {
@@ -31,7 +34,7 @@ function convert(node: TreeItem, parentUid?: string): state {
       return { ...acc, ...state };
     }, {});
   const children = Object.keys(state).filter(
-    (_uid: any) => state[_uid]._parent === uid
+    (u: any) => state[u].parent === uid
   );
 
   return {
@@ -39,40 +42,34 @@ function convert(node: TreeItem, parentUid?: string): state {
     [uid]: {
       ...node,
       children: children,
-      // NOTE: a promise is created here to avoid concurrency (promise is called only once)
-      lazy: (function (): () => Promise<state> {
-        return (): Promise<state> => {
-          if (node.lazy === undefined) {
-            return Promise.resolve({});
-          }
+      lazy: async (): Promise<state> => {
+        if (node.lazy === undefined) {
+          return {};
+        }
 
-          return node.lazy!().then((nodes): state => {
-            const state = nodes
-              .map((node) => convert(node, uid))
-              .reduce((acc, state): state => {
-                return { ...acc, ...state };
-              }, {});
-            const nchildren = Object.keys(state).filter(
-              (_uid: any) => state[_uid]._parent === uid
-            );
+        const nodes = await node.lazy!();
+        const state = nodes
+          .map((node) => convert(node, uid))
+          .reduce((acc, state): state => {
+            return { ...acc, ...state };
+          }, {});
+        const nchildren = Object.keys(state).filter(
+          (_uid: any) => state[_uid].parent === uid
+        );
 
-            return {
-              ...state,
-              [uid]: {
-                ...node,
-                children: [...children, ...nchildren],
-                lazy: () => Promise.resolve<state>({}),
-                _parent: parentUid,
-                _expandable: children.length + nchildren.length > 0,
-                _selected: false,
-              },
-            };
-          });
+        return {
+          ...state,
+          [uid]: {
+            ...node,
+            children: [...children, ...nchildren],
+            lazy: () => Promise.resolve<state>({}),
+            parent: parentUid,
+            expandable: children.length + nchildren.length > 0,
+          },
         };
-      })(),
-      _parent: parentUid,
-      _expandable: children.length > 0 || node.lazy !== undefined,
-      _selected: false,
+      },
+      parent: parentUid,
+      expandable: children.length > 0 || node.lazy !== undefined,
     },
   };
 }
@@ -119,7 +116,11 @@ export interface TreeItem {
  * @element cds-dynamic-tree
  * @param data Object definition of the tree
  */
-export function CdsDynamicTree({ data, onSelectedChange }: props): JSX.Element {
+export function CdsDynamicTree({
+  data,
+  onSelectedChange,
+  value,
+}: props): JSX.Element {
   const [tree, updateTree] = useState<state>({});
   const [jsx, updateJSX] = useState<JSX.Element[]>([]);
 
@@ -135,35 +136,34 @@ export function CdsDynamicTree({ data, onSelectedChange }: props): JSX.Element {
     return (
       <CdsTreeItem
         key={uid}
-        expandable={node._expandable}
-        selected={node._selected}
-        onExpandedChange={(e: Event) => {
+        expandable={node.expandable}
+        selected={node.value === value}
+        onExpandedChange={async (e: Event) => {
           const event = e as CustomEvent<boolean>;
           (e.target as CoreCdsTreeItem).expanded = event.detail;
           (e.target as CoreCdsTreeItem).loading = true;
 
-          node
-            .lazy()
-            .then((updated: state) => {
-              updateTree((old): state => ({ ...old, ...updated }));
-            })
-            .then(() => ((e.target as CoreCdsTreeItem).loading = false));
+          const children = await node.lazy();
+          updateTree((old): state => {
+            (e.target as CoreCdsTreeItem).loading = false;
+            return { ...old, ...children };
+          });
         }}
         onSelectedChange={(e: Event) => {
           if (node.unselectable) return;
 
+          if (onSelectedChange) onSelectedChange(node.value);
           updateTree(
             (old): state =>
             ({
               ...Object.keys(old)
-                .map((uid) => ({ [uid]: { ...old[uid], _selected: false } }))
+                .map((uid) => ({ [uid]: { ...old[uid] } }))
                 .reduce((acc: state, state): state => {
                   return { ...acc, ...state };
                 }, {}),
-              [uid]: { ...old[uid], _selected: true },
+              [uid]: { ...old[uid] },
             } as state)
           );
-          if (onSelectedChange) onSelectedChange(node.value);
         }}
       >
         {node.text}
@@ -179,10 +179,10 @@ export function CdsDynamicTree({ data, onSelectedChange }: props): JSX.Element {
   //       number of dataset.
   useEffect(() => {
     const jsx = Object.keys(tree)
-      .filter((n: string) => !tree[n]._parent)
+      .filter((n: string) => !tree[n].parent)
       .map((n: string) => render(tree, n));
     updateJSX(jsx);
-  }, [tree]);
+  }, [tree, value]);
 
   // NOTE: initialise the tree from the given data
   useEffect(() => {
