@@ -6,11 +6,11 @@
  * @param a - the number of bytes to convert
  * @returns an human redable string of the given number of bytes
  */
-export function BytesToString(a: number) {
-  if (a === null) return "NaN";
+ export function BytesToString(a: number) {
+  if (a === null) return 'NaN';
   let b = 0;
   for (; a > 1024 && ++b; ) a /= 1024;
-  return a.toFixed(a <= 10 && b > 0 ? 1 : 0) + ["", "K", "M", "G", "T", "P"][b];
+  return a.toFixed(a <= 10 && b > 0 ? 1 : 0) + ['', 'K', 'M', 'G', 'T', 'P'][b];
 }
 
 /**
@@ -21,12 +21,22 @@ export function BytesToString(a: number) {
  * @returns the string representation of the value
  */
 export function Stringify(value: any) {
-  if (["array", "object"].includes(typeof value)) {
+  if (['array', 'object'].includes(typeof value)) {
     try {
       return JSON.stringify(value);
     } catch (e) {
-      return value?.toString() || "";
+      return value?.toString() || '';
     }
   }
-  return value?.toString() || "";
+  return value?.toString() || '';
+}
+
+/**
+ * Reducer used to merge a list of object into a single one.
+ * @param acc     accumulator when previous object are merged
+ * @param current current object to merge into the accumulator
+ * @returns an object composed the given list of objects
+ */
+export function ReducerMergeObject<AccT, T>(acc: AccT, current: T): AccT {
+  return { ...acc, ...current };
 }

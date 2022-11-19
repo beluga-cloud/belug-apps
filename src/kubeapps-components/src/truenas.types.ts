@@ -1,12 +1,4 @@
 /**
- * DatasetsTreeView parameter comming from the custom component configuration
- * @property {string}  apiURL  The API URL used to generate dynamically the dataset
- */
-export interface DatasetsTreeViewParam {
-  apiURL?: string;
-}
-
-/**
  * ZFS Pool object based on the JSON returned by TrueNAS API. Only required
  * properties are kept.
  * @property {string}   name      pool name
@@ -15,12 +7,14 @@ export interface DatasetsTreeViewParam {
  * @property {boolean}  warning   did the pool have any warnings?
  * @property {number}   free      remaining pool capacity
  */
-export interface ZFSPool {
+ export interface ZFSPool {
   name: string;
-  status: "ONLINE" | "OFFLINE";
+  status: 'ONLINE' | 'OFFLINE';
   healthy: boolean;
   warning: boolean;
   free: number;
+
+  children: ZFSDataset[];
 }
 
 /**

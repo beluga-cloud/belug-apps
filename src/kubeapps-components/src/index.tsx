@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { CdsControlMessage } from '@cds/react/forms';
 
-import { CustomParamProps } from './types.interface';
+import { CustomParamProps, BelugappsComponentUnion } from './types.interface';
 import DatasetsTreeView from './truenas.datasets';
 import { Stringify } from './utils';
-
-// source: https://github.com/vmware-tanzu/kubeapps/blob/cc9eddb78cf8e3611e0d50daed4fe6ca73418530/dashboard/src/components/DeploymentForm/DeploymentFormBody/BasicDeploymentForm/TabularSchemaEditorTable/TabularSchemaEditorTableRenderer.tsx#L14
-const MAX_LENGTH = 60;
+import { DatasetsTreeViewParam } from './truenas.datasets';
 
 /**
  * Implements Kubeapps custom components. Because we can only export one custom
@@ -16,7 +14,7 @@ const MAX_LENGTH = 60;
 export default function CustomComponents({
   param,
   handleBasicFormParamChange,
-}: CustomParamProps) {
+}: CustomParamProps<BelugappsComponentUnion>) {
   const [error, setError] = useState<string>('');
   const [isValueModified, setIsValueModified] = useState(false);
   const [timeout, setThisTimeout] = useState({} as NodeJS.Timeout);
@@ -53,10 +51,10 @@ export default function CustomComponents({
       case 'truenas.datasets':
         return (
           <DatasetsTreeView
-            param={param.customComponent}
+            param={param.customComponent as DatasetsTreeViewParam}
             onValueChange={onValueChange}
             onError={(e) => setError(`${e}`)}
-            value={value}
+            currentValue={value}
           ></DatasetsTreeView>
         );
       default:

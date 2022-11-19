@@ -24,8 +24,8 @@
   },
   "dependencies": {
     "@cds/city": "1.1.0",
-    "@cds/core": "6.1.4",
-    "@cds/react": "6.1.4",
+    "@cds/core": "6.2.0",
+    "@cds/react": "6.2.0",
     "ajv": "^8.11.0",
     "core-js": "^3.26.0",
     "react": "^18.2.0",

@@ -1,6 +1,6 @@
-import { JSONSchemaType, ErrorObject } from "ajv";
+import { JSONSchemaType, ErrorObject } from 'ajv';
 
-import { DatasetsTreeViewParam } from "./truenas.datasets.types";
+import { DatasetsTreeViewParam } from './truenas.datasets';
 
 /**
  * Params used by Kubeapps to render each parameter in the user interface, based
@@ -22,25 +22,18 @@ type IBasicFormParam = JSONSchemaType<any> & {
 };
 
 /**
- * Params used by BelugApps components.
- */
-type BelugappsComponentParam = DatasetsTreeViewParam & {
-  type: "truenas.datasets" | "truenas.hostpath";
-};
-
-/**
  * Params used by Kubeapps to render each parameter in the user interface. Some
  * of these values are modified depending on what I've seen during runtime
  * executions.
  */
-export type KubeappsComponentParam = Omit<
+export type KubeappsComponentParam<T extends DatasetsTreeViewParam> = Omit<
   IBasicFormParam,
-  "isCustomComponent"
+  'isCustomComponent'
 > & {
-  type: "string";
+  type: 'string';
 
-  isCustomComponent?: BelugappsComponentParam;
-  customComponent: BelugappsComponentParam;
+  isCustomComponent?: T;
+  customComponent: T;
 };
 
 /**
@@ -48,10 +41,10 @@ export type KubeappsComponentParam = Omit<
  * @property {KubeappsComponentParam} param                       Component params
  * @property {function}               handleBasicFormParamChange  Handler to call when the component value change
  */
-export interface CustomParamProps {
-  param: KubeappsComponentParam;
+export interface CustomParamProps<C extends BelugappsComponentUnion> {
+  param: KubeappsComponentParam<C>;
   handleBasicFormParamChange: (
-    p: KubeappsComponentParam
+    p: KubeappsComponentParam<C>
   ) => (
     e: React.FormEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -61,12 +54,20 @@ export interface CustomParamProps {
 
 /**
  * Properties used by other components.
- * @property {BelugappsComponentParam}  param         Param required to configure a component
- * @property {function}                 onValueChange Handler to call when the target must be updated
+ * @property {BelugappsComponentParam}  param         param required to configure a component
+ * @property {string}                   currentValue  value selected by the user
+ * @property {function}                 onValueChange callback to call when the target must be updated
+ * @property {function}                 onError       callback to call when an error occurs
  */
-export interface ComponentParamProps {
-  param: BelugappsComponentParam;
-  onValueChange: (e: any) => void;
+export interface ComponentParamProps<T extends BelugappsComponentUnion> {
+  param: T;
+  currentValue: string;
+
+  onValueChange: (e: string) => void;
   onError: (e: string) => void;
-  value: any;
 }
+
+/**
+ * Union of all existing Belug-Apps component parameters
+ */
+export type BelugappsComponentUnion = DatasetsTreeViewParam;
