@@ -3,7 +3,7 @@ name: Test (Golang)
 on:  # yamllint disable-line rule:truthy
   pull_request:
     types: [opened, synchronize]
-    paths: ["**.go", "**/go.sum", "**/go.mod"]
+    paths: ["src/api-proxy/**/*"]
 
 jobs:
   test:
