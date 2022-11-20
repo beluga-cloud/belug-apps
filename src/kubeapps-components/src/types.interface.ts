@@ -1,6 +1,7 @@
-import { JSONSchemaType, ErrorObject } from 'ajv';
+import { JSONSchemaType } from "ajv";
 
-import { DatasetsTreeViewParam } from './truenas.datasets';
+import { DatasetsTreeViewParam } from "./truenas.datasets";
+import { HostpathTreeViewParam } from "./truenas.hostpath";
 
 /**
  * Params used by Kubeapps to render each parameter in the user interface, based
@@ -26,11 +27,11 @@ type IBasicFormParam = JSONSchemaType<any> & {
  * of these values are modified depending on what I've seen during runtime
  * executions.
  */
-export type KubeappsComponentParam<T extends DatasetsTreeViewParam> = Omit<
+export type KubeappsComponentParam<T extends BelugappsComponentUnion> = Omit<
   IBasicFormParam,
-  'isCustomComponent'
+  "isCustomComponent"
 > & {
-  type: 'string';
+  type: "string";
 
   isCustomComponent?: T;
   customComponent: T;
@@ -70,4 +71,6 @@ export interface ComponentParamProps<T extends BelugappsComponentUnion> {
 /**
  * Union of all existing Belug-Apps component parameters
  */
-export type BelugappsComponentUnion = DatasetsTreeViewParam;
+export type BelugappsComponentUnion =
+  | DatasetsTreeViewParam
+  | HostpathTreeViewParam;

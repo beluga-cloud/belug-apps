@@ -80,7 +80,7 @@ export default class DatasetsTreeView extends React.Component<
   >(url: string): Promise<T> {
     const resp = await fetch(url, { redirect: 'follow' });
     if (!resp.ok) {
-      throw new Error(`TrueNAS API returns ${resp.status}`);
+      throw new Error(`TrueNAS API returns ${resp.status}: ${JSON.stringify(await resp.body)}`);
     }
     return (await resp.json()) as T;
   }
@@ -90,7 +90,7 @@ export default class DatasetsTreeView extends React.Component<
    */
   private async initializeZFSPools() {
     try {
-      const url = `${this.props.param.apiURL}/api/v2.0/pool`;
+      const url = `${this.props.param.apiURL ?? ""}/api/v2.0/pool`;
       const pools = await DatasetsTreeView.fetchAPI<TrueNAS.ZFSPool[]>(url);
 
       this.setState({
@@ -113,7 +113,7 @@ export default class DatasetsTreeView extends React.Component<
    */
   private async fetchZFSDatasets(pool: string) {
     try {
-      const url = `${this.props.param.apiURL}/api/v2.0/pool/dataset?pool=${pool}`;
+      const url = `${this.props.param.apiURL ?? ""}/api/v2.0/pool/dataset?pool=${pool}`;
       const datasets = await DatasetsTreeView.fetchAPI<TrueNAS.ZFSDataset[]>(
         url
       );
@@ -152,9 +152,7 @@ export default class DatasetsTreeView extends React.Component<
                 const event = e as CustomEvent<boolean>;
                 (e.target as CoreCdsTreeItem).expanded = event.detail;
 
-                if (this.state.loaded[pool.name]) {
-                  return;
-                }
+                if (this.state.loaded[pool.name]) return;
 
                 (e.target as CoreCdsTreeItem).loading = true;
                 await this.fetchZFSDatasets(pool.name);
@@ -186,7 +184,7 @@ export default class DatasetsTreeView extends React.Component<
  * React component rendering a TrueNAS ZFS pool.
  * @param pool  pool definition
  */
-export function Pool({ pool }: { pool: TrueNAS.ZFSPool }) {
+function Pool({ pool }: { pool: TrueNAS.ZFSPool }) {
   const online = pool.status === 'ONLINE';
   const healthy = pool.healthy && !pool.warning;
 
@@ -221,7 +219,7 @@ export function Pool({ pool }: { pool: TrueNAS.ZFSPool }) {
  * @param currentValue  current dataset selected
  * @param onValueChange callback called when a dataset is selected
  */
-export function Datasets({
+function Datasets({
   datasets,
   currentValue,
   onValueChange,
@@ -265,7 +263,7 @@ export function Datasets({
  * React component rendering a TrueNAS ZFS dataset.
  * @param dataset dataset definition
  */
-export function Dataset({ dataset }: { dataset: TrueNAS.ZFSDataset }) {
+function Dataset({ dataset }: { dataset: TrueNAS.ZFSDataset }) {
   return (
     <>
       <CdsIcon shape={layersIconName} />

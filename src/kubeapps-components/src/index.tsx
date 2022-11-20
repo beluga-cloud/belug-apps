@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { CdsControlMessage } from '@cds/react/forms';
 
-import { CustomParamProps, BelugappsComponentUnion } from './types.interface';
-import DatasetsTreeView from './truenas.datasets';
 import { Stringify } from './utils';
-import { DatasetsTreeViewParam } from './truenas.datasets';
+import DatasetsTreeView, { DatasetsTreeViewParam } from './truenas.datasets';
+import HostpathTreeView, { HostpathTreeViewParam } from './truenas.hostpath';
+import { CustomParamProps, BelugappsComponentUnion } from './types.interface';
 
 /**
  * Implements Kubeapps custom components. Because we can only export one custom
@@ -56,6 +56,15 @@ export default function CustomComponents({
             onError={(e) => setError(`${e}`)}
             currentValue={value}
           ></DatasetsTreeView>
+        );
+      case 'truenas.hostpath':
+        return (
+          <HostpathTreeView
+            param={param.customComponent as HostpathTreeViewParam}
+            onValueChange={onValueChange}
+            onError={(e) => setError(`${e}`)}
+            currentValue={value}
+          ></HostpathTreeView>
         );
       default:
         setError(
