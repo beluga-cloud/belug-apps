@@ -77,7 +77,7 @@ ComponentParamProps<HostpathTreeViewParam>,
    * @param path path where to list all directories
    */
 	private async listDirectory(path: string) {
-		const url = `${this.props.param?.apiURL ?? ''}/api/v2.0/filesystem/listdir`;
+		const url = `${this.props.param?.apiURL ?? ''}/truenas/api/v2.0/filesystem/listdir`;
 		try {
 			const resp = await fetch(url, {
 				method: 'POST',

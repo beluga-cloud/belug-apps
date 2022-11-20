@@ -52,15 +52,14 @@ const (
 ### Setup of `go.uber.org/zap` (`main.go`)
 
 ```go
-	log, _ := zap.NewProduction(zap.ErrorOutput(os.Stderr))
-	if env, exists := os.LookupEnv("LOG_LEVEL"); exists {
-		if level, err := zap.ParseAtomicLevel(env); err != nil {
-			log.Error(err.Error())
-		} else {
-			log, _ = zap.NewProduction(zap.IncreaseLevel(level))
-		}
-	}
-	defer log.Sync()
+if env, exists := os.LookupEnv("LOG_LEVEL"); exists {
+    if level, err := zap.ParseAtomicLevel(env); err != nil {
+        log.Error(err.Error())
+    } else {
+        log, _ = zap.NewProduction(zap.IncreaseLevel(level))
+    }
+}
+defer log.Sync()
 ```
 
 In order to give some information in the logs about the execution of the proxy (error for example), we use the project
@@ -72,17 +71,17 @@ variable.
 ### Setup of `github.com/urfave/cli/v2` (`main.go`)
 
 ```go
-	app := &cli.App{
-		Name:  "belug-apps API proxy",
-		Usage: "TrueNAS API proxy with only required paths enabled, for security reason",
-		Flags: []cli.Flag{
-			&cli.StringFlag{Name: "listen.addr", Usage: "Address to listen on", Value: "localhost:8080", EnvVars: []string{"LISTEN_ADDR"}},
-			&cli.StringFlag{Name: "truenas.url", Usage: "TrueNAS address", Required: true, EnvVars: []string{"TRUENAS_URL"}},
-			&cli.StringFlag{Name: "truenas.token", Usage: "TrueNAS API token", Required: true, EnvVars: []string{"TRUENAS_TOKEN"}},
-			&cli.BoolFlag{Name: "tls.insecure", Usage: "Allow insecure server connections", Value: false, EnvVars: []string{"TLS_INSECURE"}},
-		},
+app := &cli.App{
+    Name:  "belug-apps API proxy",
+    Usage: "TrueNAS API proxy with only required paths enabled, for security reason",
+    Flags: []cli.Flag{
+        &cli.StringFlag{Name: "listen.addr", Usage: "Address to listen on", Value: "localhost:8080", EnvVars: []string{"LISTEN_ADDR"}},
+        &cli.StringFlag{Name: "truenas.url", Usage: "TrueNAS address", Required: true, EnvVars: []string{"TRUENAS_URL"}},
+        &cli.StringFlag{Name: "truenas.token", Usage: "TrueNAS API token", Required: true, EnvVars: []string{"TRUENAS_TOKEN"}},
+        &cli.BoolFlag{Name: "tls.insecure", Usage: "Allow insecure server connections", Value: false, EnvVars: []string{"TLS_INSECURE"}},
+    },
 
-		Action: ProxyAction(log),
+    Action: ProxyAction(log),
 }
 ```
 
@@ -101,40 +100,27 @@ All of these flags can also be configured directly through environment variables
 #### Extracting some flags values
 
 ```go
-			truenasToken := ctx.String("token")
-			truenasURL, err := url.Parse(ctx.String("url"))
-			if err != nil {
-				return err
-			}
+truenasToken := ctx.String("token")
+truenasURL, err := url.Parse(ctx.String("url"))
+if err != nil {
+    return err
+}
 ```
 
 Here, we juste extract the TrueNAS URL and API token, with some validation.
 
-#### Setup of the ARC cache
-
-```go
-			// NOTE: ARC cache is a simple but efficient cache for our usage
-			log.Info(fmt.Sprintf("setup ARC cache (%d bytes)", CacheSize))
-			cache, err := lru.NewARC(CacheSize)
-			if err != nil {
-				return err
-			}
-```
-
-> _NOTE:_ The `CacheSize` is the `const` define at the beginning.
-
 #### Setup of the reverse proxy handler
 
 ```go
-			// NOTE: in order to have the proxy mechanism, we will use the
-			//		 httputil.ReverseProxy as handler.
-			log.Info(fmt.Sprintf("setup reverse proxy to %s", truenasURL.String()))
-			proxy := httputil.NewSingleHostReverseProxy(truenasURL)
-			proxy.Transport = http.DefaultTransport
-			if ctx.Bool("insecure") {
-				log.Warn("insecure mode enabled; all communication between TrueNAS and API will not be encrypted")
-				proxy.Transport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-			}
+// NOTE: in order to have the proxy mechanism, we will use the
+//		 httputil.ReverseProxy as handler.
+log.Info(fmt.Sprintf("setup reverse proxy to %s", truenasURL.String()))
+proxy := httputil.NewSingleHostReverseProxy(truenasURL)
+proxy.Transport = http.DefaultTransport
+if ctx.Bool("insecure") {
+    log.Warn("insecure mode enabled; all communication between TrueNAS and API will not be encrypted")
+    proxy.Transport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+}
 ```
 
 The standard golang library provides a tool to easily create a reverse proxy handler, which is then used by the 
@@ -144,11 +130,11 @@ This is also where we disable TrueNAS TLS certificate verification, if you enabl
 #### Setup of `github.com/gorilla/mux`
 
 ```go
-			// NOTE: we will use a router to easily handle auth and cache middleware and
-			//		 to only handle route that we need for Belug-Apps
-			r := mux.NewRouter()
-			r.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) { w.WriteHeader(http.StatusUnauthorized) })
-			r.MethodNotAllowedHandler = r.NotFoundHandler
+// NOTE: we will use a router to easily handle auth and cache middleware and
+//		 to only handle route that we need for Belug-Apps
+r := mux.NewRouter()
+r.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) { w.WriteHeader(http.StatusUnauthorized) })
+r.MethodNotAllowedHandler = r.NotFoundHandler
 ```
 
 The choice of `github.com/gorilla/mux` is personal, as I like this library and have used it before.  
@@ -163,28 +149,34 @@ responses before and after reaching the reverse proxy handler.
 Here is the sequence diagram of these middlewares:
 ```mermaid
 sequenceDiagram
-    Client->>[Middleware] Access Log: GET /api/v2.0/pool
+    Client->>[Middleware] Access Log: GET /truenas/api/v2.0/pool
     [Middleware] Access Log->>[Middleware] Cache: Forward request
     alt request is cached
         [Middleware] Cache->>[Middleware] Access Log: Answer cached response
         [Middleware] Access Log->>Client: Forward cached response
     else
-        [Middleware] Cache->>[Middleware] Authentication: Forward request
-        [Middleware] Authentication->>Reverse Proxy Handler: Forward request with the `Bearer` token
-        Reverse Proxy Handler->>TrueNAS API: Forward request
-        TrueNAS API->>Reverse Proxy Handler: Answer
-        Reverse Proxy Handler->>[Middleware] Authentication: Forward response
-        [Middleware] Authentication->>[Middleware] Cache: Forward response
-        [Middleware] Cache->>[Middleware] Access Log: Forward response
-        [Middleware] Access Log-->>[Middleware] Access Log: Log some information
-        [Middleware] Access Log->>Client: Forward response
+        [Middleware] Cache->>[Middleware] DisableCompression: Forward request
+        alt path prefix is '/truenas/'
+          [Middleware] DisableCompression->>[Middleware] TrimPathPrefix: Forward request
+          [Middleware] TrimPathPrefix->>[Middleware] Authentication: Forward request without the prefix
+          [Middleware] Authentication->>Reverse Proxy Handler: Forward request with the `Bearer` token
+          Reverse Proxy Handler->>TrueNAS API: Forward request
+          TrueNAS API->>Reverse Proxy Handler: Answer
+          Reverse Proxy Handler->>[Middleware] Authentication: Forward response
+          [Middleware] Authentication->>[Middleware] TrimPathPrefix: Forward response
+          [Middleware] TrimPathPrefix->>[Middleware] DisableCompression: Forward response
+          [Middleware] DisableCompression->>[Middleware] Cache: Forward response
+      end
+      [Middleware] Cache->>[Middleware] Access Log: Forward response
+      [Middleware] Access Log-->>[Middleware] Access Log: Log some information
+      [Middleware] Access Log->>Client: Forward response
     end
 ```
 
 ##### Logging middleware
 
 ```go
-			r.Use(func(handler http.Handler) http.Handler { return handlers.CombinedLoggingHandler(os.Stdout, handler) })
+r.Use(func(handler http.Handler) http.Handler { return handlers.CombinedLoggingHandler(os.Stdout, handler) })
 ```
 
 In order to have easily parsable access logs, I use a handler already provided by `github.com/gorilla`. All access logs 
@@ -198,11 +190,24 @@ This is the most complex part of the reverse proxy. This cache is based on two a
 
 The choice of these two algorithms is mainly due to the fact that they are two performant algorithms that I knew about.
 
+###### Setup of the ARC cache
+
+```go
+// NOTE: ARC cache is a simple but efficient cache for our usage
+log.Info(fmt.Sprintf("setup ARC cache (%d bytes)", size))
+cache, err := lru.NewARC(size)
+if err != nil {
+    return err
+}
+```
+
+> _NOTE:_ The `CacheSize` is the `const` define at the beginning.
+
 ###### Preparation
 
 ```go
-					begin := time.Now()
-					hash := fnv.New128a()
+begin := time.Now()
+hash := fnv.New128a()
 ```
 
 The first step is to prepare some variables that will be useful later on:
@@ -212,16 +217,16 @@ The first step is to prepare some variables that will be useful later on:
 ###### Generate the cache key
 
 ```go
-					_, _ = hash.Write([]byte(req.URL.String()))
+_, _ = hash.Write([]byte(req.URL.String()))
 
-					// NOTE: on POST request, we would like to use the body as key cache
-					if req.Method == http.MethodPost {
-						bodyBytes, _ := io.ReadAll(req.Body)
-						_ = req.Body.Close()
-						req.Body = io.NopCloser(bytes.NewReader(bodyBytes))
-						_, _ = hash.Write(bodyBytes)
-					}
-					key := string(hash.Sum(nil))
+// NOTE: on POST request, we would like to use the body as key cache
+if req.Method == http.MethodPost {
+    bodyBytes, _ := io.ReadAll(req.Body)
+    _ = req.Body.Close()
+    req.Body = io.NopCloser(bytes.NewReader(bodyBytes))
+    _, _ = hash.Write(bodyBytes)
+}
+key := string(hash.Sum(nil))
 ```
 
 The cache key is based on two elements:
@@ -233,20 +238,20 @@ The cache key is based on two elements:
 ###### Fetch the cache with the cache key
 
 ```go
-					// NOTE: fetch and check if the request is already cached
-					cached, exists := cache.Get(key)
-					switch {
-					case exists && begin.Sub(cached.(*HttpResponseEntry).created) >= CacheMaxAge:
-						cache.Remove(key)
-					case exists:
-						_, _ = w.Write(cached.(*HttpResponseEntry).Body)
-						for k, vs := range cached.(*HttpResponseEntry).Header {
-							for _, v := range vs {
-								w.Header().Add(k, v)
-							}
-						}
-						return
-					}
+// NOTE: fetch and check if the request is already cached
+cached, exists := cache.Get(key)
+switch {
+case exists && begin.Sub(cached.(*HttpResponseEntry).created) >= maxAge:
+    cache.Remove(key)
+case exists:
+    _, _ = w.Write(cached.(*HttpResponseEntry).Body)
+    for k, vs := range cached.(*HttpResponseEntry).Header {
+        for _, v := range vs {
+            w.Header().Add(k, v)
+        }
+    }
+    return
+}
 ```
 
 We search the cache to see if the request was properly cached. If it was and if its age does not exceed the defined 
@@ -259,8 +264,8 @@ value `CacheMaxAge`, we return the response immediately. If it is expired, we si
 ###### Prepare the response recorder and send the request
 
 ```go
-					recorder := httptest.NewRecorder()
-					handler.ServeHTTP(recorder, req)
+recorder := httptest.NewRecorder()
+handler.ServeHTTP(recorder, req)
 ```
 
 In order to be able to intercept the response of the next middleware/handler, we use a tool generally used for tests; 
@@ -269,74 +274,93 @@ In order to be able to intercept the response of the next middleware/handler, we
 ###### Cache the response
 
 ```go
-					// NOTE: we cache responses only TrueNAS respond in more than 500ms
-					if recorder.Code == http.StatusOK && time.Now().Sub(begin) > 500*time.Millisecond {
-						cache.Add(key, &HttpResponseEntry{
-							Header:  recorder.Header(),
-							Body:    recorder.Body.Bytes(),
-							created: time.Now()},
-						)
-					}
+// NOTE: we cache responses only TrueNAS respond in more than 500ms
+if recorder.Code == http.StatusOK && time.Now().Sub(begin) > 500*time.Millisecond {
+    cache.Add(key, &HttpResponseEntry{
+        Header:  recorder.Header(),
+        Body:    recorder.Body.Bytes(),
+        created: time.Now()},
+    )
+}
 ```
 
 If the response is valid (`200`) and if the response time is greater than 500ms, we hide the response.  
 The choice of 500ms is purely arbitrary. Below that, I don't feel the difference, and we fill in the cache for nothing.
 
 ```go
-					// NOTE: we copy all data from the recorder to the response
-					w.WriteHeader(recorder.Code)
-					_, _ = w.Write(recorder.Body.Bytes())
-					for k, vs := range recorder.Header() {
-						for _, v := range vs {
-							w.Header().Add(k, v)
-						}
-					}
-				})
+// NOTE: we copy all data from the recorder to the response
+w.WriteHeader(recorder.Code)
+_, _ = w.Write(recorder.Body.Bytes())
+for k, vs := range recorder.Header() {
+    for _, v := range vs {
+        w.Header().Add(k, v)
+    }
+}
 ```
 
 This last part simply moves the data from the recorder to the answer writer.
 
-#### Authentication middleware
+##### Authentication middleware
 
 ```go
-			r.Use(func(handler http.Handler) http.Handler {
-				// NOTE: authentication middleware
-				return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-					req.Header.Set("Authorization", "Bearer "+truenasToken)
-					handler.ServeHTTP(w, req)
-				})
-			})
+return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+    req.Header.Set("Authorization", "Bearer "+truenasToken)
+    handler.ServeHTTP(w, req)
+})
 ```
 
 This middleware adds the TrueNAS API token in the `Authorization` header as a Bearer token.
 
+##### NoCompressionMiddleware middleware
+
+```go
+return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+    req.Header.Set("Accept-Encoding", "identity")
+    next.ServeHTTP(w, req)
+})
+```
+
+This middleware disable any compression on response by forcing the HTTP header `Accept-Encoding`.
+
+##### TrimPathPrefixMiddleware middleware
+
+```go
+return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+    req.URL.Path = strings.TrimPrefix(req.URL.Path, prefix)
+    next.ServeHTTP(w, req)
+})
+```
+
+This middleware trims the prefix on the request path.
+
 ### Route definition (`proxy.go`)
 
 ```go
-			// NOTE: here is where all required paths are allowed
-			r.Methods(http.MethodGet).
-				Path("/api-proxy/v2.0/pool").
-				HandlerFunc(proxy.ServeHTTP)
-			r.Methods(http.MethodGet).
-				Path("/api-proxy/v2.0/pool/dataset").
-				HandlerFunc(proxy.ServeHTTP)
-			r.Methods(http.MethodPost).
-				Path("/api-proxy/v2.0/filesystem/listdir").
-				HandlerFunc(proxy.ServeHTTP)
+// NOTE: TrueNAS dedicated paths
+truenasRouter := r.PathPrefix("/truenas/").Subrouter()
+truenasRouter.Methods(http.MethodGet).
+    Path("/api/v2.0/pool").
+    HandlerFunc(proxy.ServeHTTP)
+truenasRouter.Methods(http.MethodGet).
+    Path("/api/v2.0/pool/dataset").
+    HandlerFunc(proxy.ServeHTTP)
+truenasRouter.Methods(http.MethodPost).
+    Path("/api/v2.0/filesystem/listdir").
+    HandlerFunc(proxy.ServeHTTP)
 ```
 
 ### Start the internal HTTP server (`proxy.go`)
 
 ```go
-			log.Info(fmt.Sprintf("start API on %s", ctx.String("listen")))
-			return http.ListenAndServe(ctx.String("listen"), r)
+log.Info(fmt.Sprintf("start API on %s", ctx.String("listen")))
+return http.ListenAndServe(ctx.String("listen"), r)
 ```
 
 ### Start the proxy (`main.go`)
 
 ```go
-	if err := app.Run(os.Args); err != nil {
-		log.Fatal(err.Error())
-		os.Exit(1)
-	}
+if err := app.Run(os.Args); err != nil {
+    log.Fatal(err.Error())
+    os.Exit(1)
+}
 ```

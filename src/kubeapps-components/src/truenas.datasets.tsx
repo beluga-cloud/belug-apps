@@ -137,7 +137,7 @@ ComponentParamProps<DatasetsTreeViewParam>,
    */
 	private async initializeZfsPools() {
 		try {
-			const url = `${this.props.param.apiURL ?? ''}/api/v2.0/pool`;
+			const url = `${this.props.param.apiURL ?? ''}/truenas/api/v2.0/pool`;
 			const pools = await DatasetsTreeView.fetchApi<TrueNAS.ZfsPool[]>(url);
 
 			this.setState({
@@ -160,7 +160,7 @@ ComponentParamProps<DatasetsTreeViewParam>,
    */
 	private async fetchZfsDatasets(pool: string) {
 		try {
-			const url = `${this.props.param.apiURL ?? ''}/api/v2.0/pool/dataset?pool=${pool}`;
+			const url = `${this.props.param.apiURL ?? ''}/truenas/api/v2.0/pool/dataset?pool=${pool}`;
 			const datasets = await DatasetsTreeView.fetchApi<TrueNAS.ZfsDataset[]>(
 				url,
 			);
