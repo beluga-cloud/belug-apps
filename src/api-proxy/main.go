@@ -7,8 +7,10 @@ import (
 	"go.uber.org/zap"
 )
 
+// NOTE: default logger used everywhere
+var log = zap.Must(zap.NewProduction(zap.ErrorOutput(os.Stderr)))
+
 func main() {
-	log, _ := zap.NewProduction(zap.ErrorOutput(os.Stderr))
 	if env, exists := os.LookupEnv("LOG_LEVEL"); exists {
 		if level, err := zap.ParseAtomicLevel(env); err != nil {
 			log.Error(err.Error())

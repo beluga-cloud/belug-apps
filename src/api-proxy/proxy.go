@@ -1,13 +1,9 @@
 package main
 
 import (
-	"bytes"
 	"crypto/tls"
 	"fmt"
-	"hash/fnv"
-	"io"
 	"net/http"
-	"net/http/httptest"
 	"net/http/httputil"
 	"net/url"
 	"os"
@@ -15,7 +11,6 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	lru "github.com/hashicorp/golang-lru"
 	"github.com/urfave/cli/v2"
 	"go.uber.org/zap"
 )
@@ -50,13 +45,6 @@ func ProxyAction(log *zap.Logger) cli.ActionFunc {
 			return err
 		}
 
-		// NOTE: ARC cache is a simple but efficient cache for our usage
-		log.Info(fmt.Sprintf("setup ARC cache (%d bytes)", CacheSize))
-		cache, err := lru.NewARC(CacheSize)
-		if err != nil {
-			return err
-		}
-
 		// NOTE: in order to have the proxy mechanism, we will use the
 		//		 httputil.ReverseProxy as handler.
 		log.Info(fmt.Sprintf("setup reverse proxy to %s", truenasURL.String()))
@@ -74,67 +62,8 @@ func ProxyAction(log *zap.Logger) cli.ActionFunc {
 		r.MethodNotAllowedHandler = r.NotFoundHandler
 
 		r.Use(func(handler http.Handler) http.Handler { return handlers.CombinedLoggingHandler(os.Stdout, handler) })
-		r.Use(func(handler http.Handler) http.Handler {
-			// NOTE: cache middleware
-			return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-				begin := time.Now()
-				hash := fnv.New128a()
-				_, _ = hash.Write([]byte(req.URL.String()))
-
-				// NOTE: on POST request, we would like to use the body as key cache
-				if req.Method == http.MethodPost {
-					bodyBytes, _ := io.ReadAll(req.Body)
-					_ = req.Body.Close()
-					req.Body = io.NopCloser(bytes.NewReader(bodyBytes))
-					_, _ = hash.Write(bodyBytes)
-				}
-				key := string(hash.Sum(nil))
-
-				// NOTE: fetch and check if the request is already cached
-				cached, exists := cache.Get(key)
-				switch {
-				case exists && begin.Sub(cached.(*HttpResponseEntry).hit) >= CacheMaxAge:
-					cache.Remove(key)
-				case exists:
-					cached.(*HttpResponseEntry).hit = time.Now()
-					_, _ = w.Write(cached.(*HttpResponseEntry).Body)
-					for k, vs := range cached.(*HttpResponseEntry).Header {
-						for _, v := range vs {
-							w.Header().Add(k, v)
-						}
-					}
-					return
-				}
-
-				recorder := httptest.NewRecorder()
-				handler.ServeHTTP(recorder, req)
-
-				// NOTE: we cache responses only TrueNAS respond in more than 500ms
-				if recorder.Code == http.StatusOK && time.Since(begin) > 500*time.Millisecond {
-					cache.Add(key, &HttpResponseEntry{
-						Header: recorder.Header(),
-						Body:   recorder.Body.Bytes(),
-						hit:    time.Now()},
-					)
-				}
-
-				// NOTE: we copy all data from the recorder to the response
-				w.WriteHeader(recorder.Code)
-				_, _ = w.Write(recorder.Body.Bytes())
-				for k, vs := range recorder.Header() {
-					for _, v := range vs {
-						w.Header().Add(k, v)
-					}
-				}
-			})
-		})
-		r.Use(func(handler http.Handler) http.Handler {
-			// NOTE: authentication middleware
-			return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-				req.Header.Set("Authorization", "Bearer "+truenasToken)
-				handler.ServeHTTP(w, req)
-			})
-		})
+		r.Use(CacheMiddleware(CacheMaxAge, CacheSize))
+		r.Use(TruenasAuthMiddleware(truenasToken))
 
 		// NOTE: here is where all required paths are allowed
 		r.Methods(http.MethodGet).
