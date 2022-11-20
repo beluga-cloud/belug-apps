@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -77,7 +78,25 @@ func CacheMiddleware(maxAge time.Duration, size int) mux.MiddlewareFunc {
 	}
 }
 
-// TruenasAuthMiddleware authenticates all requests to the TrueNAS API
+// NoCompressionMiddleware disables all compression between backend and proxy.
+func NoCompressionMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		req.Header.Set("Accept-Encoding", "identity")
+		next.ServeHTTP(w, req)
+	})
+}
+
+// TrimPathPrefixMiddleware trims the path prefix from the request URL.
+func TrimPathPrefixMiddleware(prefix string) mux.MiddlewareFunc {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+			req.URL.Path = strings.TrimPrefix(req.URL.Path, prefix)
+			next.ServeHTTP(w, req)
+		})
+	}
+}
+
+// TruenasAuthMiddleware authenticates all requests to the TrueNAS API.
 func TruenasAuthMiddleware(token string) mux.MiddlewareFunc {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {

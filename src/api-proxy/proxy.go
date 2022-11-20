@@ -61,22 +61,29 @@ func ProxyAction(log *zap.Logger) cli.ActionFunc {
 		r.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) { w.WriteHeader(http.StatusUnauthorized) })
 		r.MethodNotAllowedHandler = r.NotFoundHandler
 
-		r.Use(func(handler http.Handler) http.Handler { return handlers.CombinedLoggingHandler(os.Stdout, handler) })
-		r.Use(CacheMiddleware(CacheMaxAge, CacheSize))
-		r.Use(TruenasAuthMiddleware(truenasToken))
+		r.Use(
+			func(handler http.Handler) http.Handler { return handlers.CombinedLoggingHandler(os.Stdout, handler) },
+			CacheMiddleware(CacheMaxAge, CacheSize),
+			NoCompressionMiddleware,
+		)
 
 		// NOTE: here is where all required paths are allowed
-		r.Methods(http.MethodGet).
+		truenasRouter := r.PathPrefix("/truenas/").Subrouter()
+		truenasRouter.Use(
+			TrimPathPrefixMiddleware("/truenas"),
+			TruenasAuthMiddleware(truenasToken),
+		)
+		truenasRouter.Methods(http.MethodGet).
 			Path("/api/v2.0/pool").
 			HandlerFunc(proxy.ServeHTTP)
-		r.Methods(http.MethodGet).
+		truenasRouter.Methods(http.MethodGet).
 			Path("/api/v2.0/pool/dataset").
 			HandlerFunc(proxy.ServeHTTP)
-		r.Methods(http.MethodPost).
+		truenasRouter.Methods(http.MethodPost).
 			Path("/api/v2.0/filesystem/listdir").
 			HandlerFunc(proxy.ServeHTTP)
 
-		log.Info(fmt.Sprintf("start API on %s", ctx.String("listen")))
+		log.Info(fmt.Sprintf("start API on %s", ctx.String("listen.addr")))
 		return http.ListenAndServe(ctx.String("listen.addr"), r)
 	}
 }
