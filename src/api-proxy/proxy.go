@@ -68,6 +68,7 @@ func ProxyAction(log *zap.Logger) cli.ActionFunc {
 		)
 
 		// NOTE: here is where all required paths are allowed
+		// NOTE: TrueNAS dedicated paths
 		truenasRouter := r.PathPrefix("/truenas/").Subrouter()
 		truenasRouter.Use(
 			TrimPathPrefixMiddleware("/truenas"),
