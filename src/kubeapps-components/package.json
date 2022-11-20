@@ -7,8 +7,9 @@
   "private": true,
   "scripts": {
     "build": "webpack --mode=production",
-    "lint": "eslint .",
-    "lint:ci": "eslint --output-file eslint_report.json --format json ."
+    "lint": "eslint",
+    "lint:ci": "eslint --output-file eslint_report.json --format json",
+    "lint:repair": "eslint --fix"
   },
   "devDependencies": {
     "@babel/core": "^7.19.6",

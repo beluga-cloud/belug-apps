@@ -1,19 +1,20 @@
 import React from 'react';
 import {
-  ClarityIcons,
-  folderIcon,
-  folderIconName,
+	ClarityIcons,
+	folderIcon,
+	folderIconName,
 } from '@cds/core/icon';
-import { CdsTreeItem as CoreCdsTreeItem } from '@cds/core/tree-view';
-import { CdsIcon } from '@cds/react/icon';
-import { CdsTag } from '@cds/react/tag';
-import { CdsTree, CdsTreeItem } from '@cds/react/tree-view';
+import {type CdsTreeItem as CoreCdsTreeItem} from '@cds/core/tree-view';
+import {CdsIcon} from '@cds/react/icon';
+import {CdsTag} from '@cds/react/tag';
+import {CdsTree, CdsTreeItem} from '@cds/react/tree-view';
 
-import * as TrueNAS from './truenas.types';
-import { ComponentParamProps } from './types.interface';
-import { ReducerMergeObject } from './utils';
+import type * as TrueNAS from './truenas.types';
+import {type ComponentParamProps} from './types.interface';
+import {reducerMergeObject} from './utils';
 
-// load all used icons
+// Load all used icons
+// eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
 const _ = ClarityIcons.addIcons(folderIcon);
 
 /**
@@ -21,11 +22,11 @@ const _ = ClarityIcons.addIcons(folderIcon);
  * @property {string} path    the path where the tree view starts
  * @property {string} apiURL  the API URL used to list directory from TrueNAS host
  */
-export interface HostpathTreeViewParam {
-  type: 'truenas.hostpath';
-  path?: string;
-  apiURL?: string;
-}
+export type HostpathTreeViewParam = {
+	type: 'truenas.hostpath';
+	path?: string;
+	apiURL?: string;
+};
 
 /**
  * This tree view is a hierarchical component that gives users access to a hierarchical set of directory displayed in
@@ -37,102 +38,104 @@ export interface HostpathTreeViewParam {
  * @param onError       callback called when an error occurs
  */
 export default class HostpathTreeView extends React.Component<
-  ComponentParamProps<HostpathTreeViewParam>,
-  { directory: TrueNAS.Directory }
+ComponentParamProps<HostpathTreeViewParam>,
+{directory: TrueNAS.Directory}
 > {
-  constructor(props: ComponentParamProps<HostpathTreeViewParam>) {
-    super(props);
+	constructor(props: ComponentParamProps<HostpathTreeViewParam>) {
+		super(props);
 
-    const path = props.param.path ?? '/mnt';
-    this.state = {
-      directory: {
-        name: path.split('/').reverse()[0],
-        path: path,
-        type: 'DIRECTORY',
-        acl: false,
-        subdir: undefined,
-      },
-    };
-  }
+		const path = props.param.path ?? '/mnt';
+		this.state = {
+			directory: {
+				name: path.split('/').reverse()[0],
+				path,
+				type: 'DIRECTORY',
+				acl: false,
+				subdir: undefined,
+			},
+		};
+	}
 
-  /**
+	render(): React.ReactNode {
+		return (
+			<CdsTree>
+				<Directory
+					key={this.state.directory.path}
+					directory={this.state.directory}
+					currentValue={this.props.currentValue}
+					onValueChange={this.props.onValueChange}
+					listDir={async (path: string) => {
+						await this.listDirectory(path);
+					}}
+				/>
+			</CdsTree>
+		);
+	}
+
+	/**
    * List all directories inside the given path and update the existing tree.
    * @param path path where to list all directories
    */
-  private async listDirectory(path: string) {
-    const url = `${this.props.param?.apiURL ?? ''}/api/v2.0/filesystem/listdir`;
-    try {
-      const resp = await fetch(url, {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ path: path }),
-        redirect: 'follow',
-      });
-      if (!resp.ok) {
-        throw new Error(
-          `TrueNAS API returns ${resp.status}: ${JSON.stringify(
-            await resp.body
-          )}`
-        );
-      }
+	private async listDirectory(path: string) {
+		const url = `${this.props.param?.apiURL ?? ''}/api/v2.0/filesystem/listdir`;
+		try {
+			const resp = await fetch(url, {
+				method: 'POST',
+				headers: {
+					Accept: 'application/json',
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({path}),
+				redirect: 'follow',
+			});
+			if (!resp.ok) {
+				throw new Error(
+					`TrueNAS API returns ${resp.status}: ${await resp.text()}`,
+				);
+			}
 
-      const directories = ((await resp.json()) as TrueNAS.File[]).filter(
-        (file) => file.type === 'DIRECTORY'
-      ) as TrueNAS.Directory[];
+			const directories = ((await resp.json()) as TrueNAS.File[]).filter(
+				file => file.type === 'DIRECTORY',
+			) as TrueNAS.Directory[];
 
-      this.setState((state) => {
-        console.log(this)
-        let dirptr = state.directory;
+			this.setState(state => {
+				console.log(this);
+				let dirptr = state.directory;
 
-        // NOTE: find the current directory based on current path
-        if (path.substring(dirptr.path.length) !== '') {
-          for (let dirname of path.substring(dirptr.path.length).split('/')) {
-            if (dirname === '') continue
+				// NOTE: find the current directory based on current path
+				if (path.substring(dirptr.path.length) !== '') {
+					for (const dirname of path.substring(dirptr.path.length).split('/')) {
+						if (dirname === '') {
+							continue;
+						}
 
-            if (dirptr.subdir === undefined) {
-              this.props.onError(
-                `Failed to generate tree for ${path}: ${dirptr.path} should have subdirectories`
-              );
-              return state;
-            }
-            if (!dirptr.subdir[dirname]) {
-              this.props.onError(
-                `Failed to generate tree for ${path}: ${dirptr.path} should have subdirectory ${dirname}`
-              );
-              return state;
-            }
+						if (dirptr.subdir === undefined) {
+							this.props.onError(
+								`Failed to generate tree for ${path}: ${dirptr.path} should have subdirectories`,
+							);
+							return state;
+						}
 
-            dirptr = dirptr.subdir[dirname];
-          }
-        }
+						if (!dirptr.subdir[dirname]) {
+							this.props.onError(
+								`Failed to generate tree for ${path}: ${dirptr.path} should have subdirectory ${dirname}`,
+							);
+							return state;
+						}
 
-        dirptr.subdir = directories
-          .map((dir) => ({ [dir.name]: dir }))
-          .reduce(ReducerMergeObject, {});
-        return state;
-      });
-    } catch (e) {
-      this.props.onError(`Failed to list directory "${path}": ${e.toString()}`);
-    }
-  }
+						dirptr = dirptr.subdir[dirname];
+					}
+				}
 
-  render(): React.ReactNode {
-    return (
-      <CdsTree>
-        <Directory
-          directory={this.state.directory}
-          currentValue={this.props.currentValue}
-          onValueChange={this.props.onValueChange}
-          listDir={async (path: string) => {
-            await this.listDirectory(path);
-          }}
-        />
-      </CdsTree>
-    );
-  }
+				dirptr.subdir = directories
+					.map(dir => ({[dir.name]: dir}))
+					.reduce(reducerMergeObject, {});
+				return state;
+			});
+		} catch (e: unknown) {
+			this.props.onError(`Failed to list directory "${path}": ${JSON.stringify(e)}`);
+		}
+	}
 }
 
 /**
@@ -143,55 +146,59 @@ export default class HostpathTreeView extends React.Component<
  * @param listDir       function used to update the list of directory with the given path
  */
 function Directory({
-  directory,
-  currentValue,
-  onValueChange,
-  listDir,
-}: Pick<ComponentParamProps<null>, 'currentValue' | 'onValueChange'> & {
-  directory: TrueNAS.Directory;
-  listDir: (path: string) => Promise<void>;
+	directory,
+	currentValue,
+	onValueChange,
+	listDir,
+}: Pick<ComponentParamProps<undefined>, 'currentValue' | 'onValueChange'> & {
+	directory: TrueNAS.Directory;
+	listDir: (path: string) => Promise<void>;
 }) {
-  return (
-    <CdsTreeItem
-      expandable={
-        directory.subdir === undefined ||
-        Object.keys(directory.subdir).length > 0
-      }
-      onExpandedChange={async (e: Event) => {
-        const event = e as CustomEvent<boolean>;
-        (e.target as CoreCdsTreeItem).expanded = event.detail;
+	return (
+		<CdsTreeItem
+			key={directory.path}
+			expandable={
+				directory.subdir === undefined
+        || Object.keys(directory.subdir).length > 0
+			}
+			onExpandedChange={async (e: Event) => {
+				const event = e as CustomEvent<boolean>;
+				(e.target as CoreCdsTreeItem).expanded = event.detail;
 
-        if (directory.subdir !== undefined) return;
+				if (directory.subdir !== undefined) {
+					return;
+				}
 
-        (e.target as CoreCdsTreeItem).loading = true;
-        await listDir(directory.path);
-        (e.target as CoreCdsTreeItem).loading = false;
-      }}
-      selected={directory.path == currentValue}
-      onSelectedChange={(e: Event) => {
-        onValueChange(directory.path);
-      }}
-    >
-      <CdsIcon shape={folderIconName} />
-      {directory.name}
+				(e.target as CoreCdsTreeItem).loading = true;
+				await listDir(directory.path);
+				(e.target as CoreCdsTreeItem).loading = false;
+			}}
+			selected={directory.path === currentValue}
+			onSelectedChange={(e: Event) => {
+				onValueChange(directory.path);
+			}}
+		>
+			<CdsIcon shape={folderIconName} />
+			{directory.name}
 
-      {/* Does the file have ACLs? */}
-      {directory.acl ? (
-        <CdsTag readonly color="gray">
+			{/* Does the file have ACLs? */}
+			{directory.acl ? (
+				<CdsTag readonly color='gray'>
           ACL
-        </CdsTag>
-      ) : undefined}
+				</CdsTag>
+			) : undefined}
 
-      {Object.keys(directory.subdir ?? {})
-        .map((dirname) => directory.subdir[dirname])
-        .map((directory) => (
-          <Directory
-            directory={directory}
-            currentValue={currentValue}
-            onValueChange={onValueChange}
-            listDir={listDir}
-          />
-        ))}
-    </CdsTreeItem>
-  );
+			{Object.keys(directory.subdir ?? {})
+				.map(dirname => directory.subdir[dirname])
+				.map(directory => (
+					<Directory
+						key={directory.path}
+						directory={directory}
+						currentValue={currentValue}
+						onValueChange={onValueChange}
+						listDir={listDir}
+					/>
+				))}
+		</CdsTreeItem>
+	);
 }

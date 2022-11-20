@@ -1,25 +1,25 @@
-import { JSONSchemaType } from "ajv";
+import {type JSONSchemaType} from 'ajv';
 
-import { DatasetsTreeViewParam } from "./truenas.datasets";
-import { HostpathTreeViewParam } from "./truenas.hostpath";
+import {type DatasetsTreeViewParam} from './truenas.datasets';
+import {type HostpathTreeViewParam} from './truenas.hostpath';
 
 /**
  * Params used by Kubeapps to render each parameter in the user interface, based
  * on Kubeapps source code.
  * https://github.com/vmware-tanzu/kubeapps/blob/cc9eddb78cf8e3611e0d50daed4fe6ca73418530/dashboard/src/shared/types.ts#L404
  */
-type IBasicFormParam = JSONSchemaType<any> & {
-  key: string;
-  title: string;
-  hasProperties: boolean;
-  params?: IBasicFormParam[];
-  enum?: string[];
-  isRequired: boolean;
-  defaultValue: any;
-  deployedValue: any;
-  currentValue: any;
-  schema: JSONSchemaType<any>;
-  isCustomComponent?: boolean;
+type BasicFormParam = JSONSchemaType<any> & {
+	key: string;
+	title: string;
+	hasProperties: boolean;
+	params?: BasicFormParam[];
+	enum?: string[];
+	isRequired: boolean;
+	defaultValue: any;
+	deployedValue: any;
+	currentValue: any;
+	schema: JSONSchemaType<any>;
+	isCustomComponent?: boolean;
 };
 
 /**
@@ -28,13 +28,13 @@ type IBasicFormParam = JSONSchemaType<any> & {
  * executions.
  */
 export type KubeappsComponentParam<T extends BelugappsComponentUnion> = Omit<
-  IBasicFormParam,
-  "isCustomComponent"
+BasicFormParam,
+'isCustomComponent'
 > & {
-  type: "string";
+	type: 'string';
 
-  isCustomComponent?: T;
-  customComponent: T;
+	isCustomComponent?: T;
+	customComponent: T;
 };
 
 /**
@@ -42,16 +42,16 @@ export type KubeappsComponentParam<T extends BelugappsComponentUnion> = Omit<
  * @property {KubeappsComponentParam} param                       Component params
  * @property {function}               handleBasicFormParamChange  Handler to call when the component value change
  */
-export interface CustomParamProps<C extends BelugappsComponentUnion> {
-  param: KubeappsComponentParam<C>;
-  handleBasicFormParamChange: (
-    p: KubeappsComponentParam<C>
-  ) => (
-    e: React.FormEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => void;
-}
+export type CustomParamProps<C extends BelugappsComponentUnion> = {
+	param: KubeappsComponentParam<C>;
+	handleBasicFormParamChange: (
+		p: KubeappsComponentParam<C>
+	) => (
+		e: React.FormEvent<
+		HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+		>
+	) => void;
+};
 
 /**
  * Properties used by other components.
@@ -60,13 +60,13 @@ export interface CustomParamProps<C extends BelugappsComponentUnion> {
  * @property {function}                 onValueChange callback to call when the target must be updated
  * @property {function}                 onError       callback to call when an error occurs
  */
-export interface ComponentParamProps<T extends BelugappsComponentUnion> {
-  param: T;
-  currentValue: string;
+export type ComponentParamProps<T extends BelugappsComponentUnion> = {
+	param: T;
+	currentValue: string;
 
-  onValueChange: (e: string) => void;
-  onError: (e: string) => void;
-}
+	onValueChange: (e: string) => void;
+	onError: (e: string) => void;
+};
 
 /**
  * Union of all existing Belug-Apps component parameters
