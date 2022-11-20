@@ -6,14 +6,34 @@ on: # yamllint disable-line rule:truthy
     paths: ["src/kubeapps-components/**/*"]
 
 jobs:
+  eslint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@8c91899e586c5b171469028077307d293428b516 # tag=v3.5.1
+        with:
+          node-version: 18
+      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
+      - name: Install dependencies
+        run: yarn install
+        working-directory: src/kubeapps-components
+      - name: Run ESLint
+        run: yarn lint:ci
+        working-directory: src/kubeapps-components
+        continue-on-error: true
+      - uses: ataylorme/eslint-annotate-action@a1bf7cb320a18aa53cb848a267ce9b7417221526 # tag=v1.2.0
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          report-json: src/kubeapps-components/eslint_report.json
+          fail-on-warning: true
+
   codeql:
     runs-on: ubuntu-latest
     permissions:
       security-events: write
     steps:
       - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
-      - uses: github/codeql-action/init@4fddc51e4f3b5e5e9022f35c3464736cc10e1e98  # tag=codeql-bundle-20221024
+      - uses: github/codeql-action/init@4fddc51e4f3b5e5e9022f35c3464736cc10e1e98 # tag=codeql-bundle-20221024
         with:
           languages: javascript
-      - uses: github/codeql-action/autobuild@4fddc51e4f3b5e5e9022f35c3464736cc10e1e98  # tag=codeql-bundle-20221024
-      - uses: github/codeql-action/analyze@4fddc51e4f3b5e5e9022f35c3464736cc10e1e98  # tag=codeql-bundle-20221024
+      - uses: github/codeql-action/autobuild@4fddc51e4f3b5e5e9022f35c3464736cc10e1e98 # tag=codeql-bundle-20221024
+      - uses: github/codeql-action/analyze@4fddc51e4f3b5e5e9022f35c3464736cc10e1e98 # tag=codeql-bundle-20221024
