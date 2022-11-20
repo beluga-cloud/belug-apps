@@ -7,11 +7,7 @@ module.exports = {
     extensions: ["", ".js", ".jsx", ".ts", ".tsx"],
   },
   externals: {
-    ajv: "ajv",
-    react: "react",
-    cds_city: "@cds/city",
-    cds_core: "@cds/core",
-    cds_react: "@cds/react",
+    react: "React",
   },
   module: {
     rules: [
@@ -19,10 +15,6 @@ module.exports = {
         test: /\.(ts|tsx)$/,
         exclude: /node_modules/,
         use: ["ts-loader"],
-      },
-      {
-        test: /\.css$/,
-        use: ["style-loader", "css-loader"],
       },
     ],
   },
