@@ -26,8 +26,8 @@ type HttpResponseEntry struct {
 	Header http.Header
 	Body   []byte
 
-	// created is used to know when this entry has been created
-	created time.Time
+	// hit is used to know when this entry has been hit for the last time
+	hit time.Time
 }
 
 const (
@@ -93,9 +93,10 @@ func ProxyAction(log *zap.Logger) cli.ActionFunc {
 				// NOTE: fetch and check if the request is already cached
 				cached, exists := cache.Get(key)
 				switch {
-				case exists && begin.Sub(cached.(*HttpResponseEntry).created) >= CacheMaxAge:
+				case exists && begin.Sub(cached.(*HttpResponseEntry).hit) >= CacheMaxAge:
 					cache.Remove(key)
 				case exists:
+					cached.(*HttpResponseEntry).hit = time.Now()
 					_, _ = w.Write(cached.(*HttpResponseEntry).Body)
 					for k, vs := range cached.(*HttpResponseEntry).Header {
 						for _, v := range vs {
@@ -111,9 +112,9 @@ func ProxyAction(log *zap.Logger) cli.ActionFunc {
 				// NOTE: we cache responses only TrueNAS respond in more than 500ms
 				if recorder.Code == http.StatusOK && time.Since(begin) > 500*time.Millisecond {
 					cache.Add(key, &HttpResponseEntry{
-						Header:  recorder.Header(),
-						Body:    recorder.Body.Bytes(),
-						created: time.Now()},
+						Header: recorder.Header(),
+						Body:   recorder.Body.Bytes(),
+						hit:    time.Now()},
 					)
 				}
 
