@@ -1,21 +1,21 @@
 ---
-name: Security (Golang)
+name: Security (NodeJS/Typescript)
 on: # yamllint disable-line rule:truthy
   pull_request:
     types: [opened, synchronize]
-    paths: ["src/api-proxy/**/*"]
+    paths: ["src/kubeapps-components/**/*"]
 
 jobs:
-  check_golang_issue:
+  check_nodejs_issue:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
-      - uses: snyk/actions/golang@7fad562681122205233d1242c3bb39598c5393da # tag=0.3.0
+      - uses: snyk/actions/node@7fad562681122205233d1242c3bb39598c5393da # tag=0.3.0
         continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          args: --sarif-file-output=snyk.sarif src/api-proxy/
+          args: --sarif-file-output=snyk.sarif src/kubeapps-components
       - uses: github/codeql-action/upload-sarif@f0a12816612c7306b485a22cb164feb43c6df818 # tag=codeql-bundle-20221024
         with:
           sarif_file: snyk.sarif

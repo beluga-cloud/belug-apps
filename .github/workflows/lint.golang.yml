@@ -3,7 +3,7 @@ name: Lint (Golang)
 on:  # yamllint disable-line rule:truthy
   pull_request:
     types: [opened, synchronize]
-    paths: ["**.go", "**/go.sum", "**/go.mod"]
+    paths: ["src/api-proxy/**/*"]
 
 jobs:
   golangci:
@@ -16,7 +16,7 @@ jobs:
       - uses: golangci/golangci-lint-action@0ad9a0988b3973e851ab0a07adf248ec2e100376 # v3.3.1
         with:
           version: latest
-          working-directory: ./api-proxy
+          working-directory: ./src/api-proxy
 
   codeql:
     runs-on: ubuntu-latest

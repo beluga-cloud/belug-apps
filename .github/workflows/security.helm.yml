@@ -1,6 +1,6 @@
 ---
 name: Security (Helm Charts)
-on:  # yamllint disable-line rule:truthy
+on: # yamllint disable-line rule:truthy
   pull_request:
     types: [opened, synchronize]
     paths: ["charts/**"]

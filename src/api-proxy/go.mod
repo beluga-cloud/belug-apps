@@ -1,4 +1,4 @@
-module github.com/belug-apps/belug-apps/api-proxy
+module github.com/belug-apps/belug-apps/src/api-proxy
 
 go 1.19
 
