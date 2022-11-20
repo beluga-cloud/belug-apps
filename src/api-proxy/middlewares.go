@@ -11,14 +11,14 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-	lru "github.com/hashicorp/golang-lru"
+	lru "github.com/hashicorp/golang-lru/v2"
 )
 
 // CacheMiddleware caches all requests that needs to be cached by the proxy (slow requests).
 func CacheMiddleware(maxAge time.Duration, size int) mux.MiddlewareFunc {
 	// NOTE: ARC cache is a simple but efficient cache for our usage
 	log.Info(fmt.Sprintf("setup ARC cache (%d bytes)", size))
-	cache, err := lru.NewARC(size)
+	cache, err := lru.NewARC[string, *HttpResponseEntry](size)
 	if err != nil {
 		panic(err)
 	}
@@ -41,12 +41,12 @@ func CacheMiddleware(maxAge time.Duration, size int) mux.MiddlewareFunc {
 			// NOTE: fetch and check if the request is already cached
 			cached, exists := cache.Get(key)
 			switch {
-			case exists && begin.Sub(cached.(*HttpResponseEntry).hit) >= maxAge:
+			case exists && begin.Sub(cached.hit) >= maxAge:
 				cache.Remove(key)
 			case exists:
-				cached.(*HttpResponseEntry).hit = time.Now()
-				_, _ = w.Write(cached.(*HttpResponseEntry).Body)
-				for k, vs := range cached.(*HttpResponseEntry).Header {
+				cached.hit = time.Now()
+				_, _ = w.Write(cached.Body)
+				for k, vs := range cached.Header {
 					for _, v := range vs {
 						w.Header().Add(k, v)
 					}
