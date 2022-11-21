@@ -1,4 +1,4 @@
-import React, {type ReactNode} from 'react';
+import React, {useEffect, useState, type ReactNode} from 'react';
 import {
 	ClarityIcons,
 	errorStandardIcon,
@@ -57,134 +57,99 @@ export type DatasetsTreeViewParam = {
  * @param onValueChange callback called when a dataset is selected
  * @param onError       callback called when an error occurs
  */
-export default class DatasetsTreeView extends React.Component<
-ComponentParamProps<DatasetsTreeViewParam>,
-{
-	pools: Record<string, TrueNAS.ZfsPool>;
-	loaded: Record<string, boolean>;
-}
-> {
+export default function DatasetsTreeView({
+	param,
+	currentValue,
+	onValueChange,
+	onError,
+}: ComponentParamProps<DatasetsTreeViewParam>) {
+	const [pools, setPools] = useState<Record<string, TrueNAS.ZfsPool & {loaded: boolean}>>({});
+
 	/**
-   * Fetch from TrueNAS url the list of pool or dataset, depending on the given URL.
-   * @param url API url to fetch
-   * @returns the list of ZFS pool or dataset fetched
-   */
-	private static async fetchApi<
-		T extends TrueNAS.ZfsPool[] | TrueNAS.ZfsDataset[],
-	>(url: string): Promise<T> {
+	 * Fetch from TrueNAS url the list of pool or dataset, depending on the given URL.
+	 * @param url API url to fetch
+	 * @returns the list of ZFS pool or dataset fetched
+	 */
+	const fetchApi = async <T extends TrueNAS.ZfsPool[] | TrueNAS.ZfsDataset[]>(url: string) => {
 		const resp = await fetch(url, {redirect: 'follow'});
 		if (!resp.ok) {
 			throw new Error(`TrueNAS API returns ${resp.status}: ${await resp.text()}`);
 		}
 
 		return (await resp.json()) as T;
-	}
+	};
 
-	constructor(props: ComponentParamProps<DatasetsTreeViewParam>) {
-		super(props);
+	const onExpandedChange = (pool: TrueNAS.ZfsPool) =>
+		async (e: Event) => {
+			const event = e as CustomEvent<boolean>;
+			(e.target as CoreCdsTreeItem).expanded = event.detail;
 
-		this.state = {pools: {}, loaded: {}};
-		void this.initializeZfsPools(); // NOTE: all exception has been catched before
-	}
-
-	render(): ReactNode {
-		return (
-			<CdsTree>
-				{Object.keys(this.state.pools)
-					.map(pool => this.state.pools[pool])
-					.map(pool => (
-						<CdsTreeItem
-							key={pool.name}
-							expandable={
-								pool.status === 'ONLINE'
-								&& (!this.state.loaded[pool.name] || pool.children.length > 0)
-							}
-							onExpandedChange={async (e: Event) => {
-								const event = e as CustomEvent<boolean>;
-								(e.target as CoreCdsTreeItem).expanded = event.detail;
-
-								if (this.state.loaded[pool.name]) {
-									return;
-								}
-
-								(e.target as CoreCdsTreeItem).loading = true;
-								await this.fetchZfsDatasets(pool.name);
-								(e.target as CoreCdsTreeItem).loading = false;
-
-								this.setState(state => ({
-									...state,
-									loaded: {
-										...state.loaded,
-										[pool.name]: true,
-									},
-								}));
-							}}
-						>
-							<Pool pool={pool} />
-							<Datasets
-								datasets={pool.children ?? []}
-								currentValue={this.props.currentValue}
-								onValueChange={this.props.onValueChange}
-							/>
-						</CdsTreeItem>
-					))}
-			</CdsTree>
-		);
-	}
-
-	/**
-   * Initialize the tree view with existing TrueNAS ZFS pools.
-   */
-	private async initializeZfsPools() {
-		try {
-			const url = `${this.props.param.apiURL ?? ''}/truenas/api/v2.0/pool`;
-			const pools = await DatasetsTreeView.fetchApi<TrueNAS.ZfsPool[]>(url);
-
-			this.setState({
-				pools: pools
-					.map(pool => ({[pool.name]: pool}))
-					.reduce(reducerMergeObject, {}),
-
-				loaded: pools
-					.map(pool => ({[pool.name]: false}))
-					.reduce(reducerMergeObject, {}),
-			});
-		} catch (e: unknown) {
-			this.props.onError(`Failed to list pools: ${JSON.stringify(e)}`);
-		}
-	}
-
-	/**
-   * Fetch all TrueNAS ZFS dataset located on the given pool.
-   * @param pool name of the pool where datasets are located
-   */
-	private async fetchZfsDatasets(pool: string) {
-		try {
-			const url = `${this.props.param.apiURL ?? ''}/truenas/api/v2.0/pool/dataset?pool=${pool}`;
-			const datasets = await DatasetsTreeView.fetchApi<TrueNAS.ZfsDataset[]>(
-				url,
-			);
-
-			if (datasets.length === 0) {
-				throw new Error('no dataset found');
+			if (pools[pool.name].loaded) {
+				return;
 			}
 
-			this.setState(state => ({
-				...state,
-				pools: {
-					...state.pools,
-					[pool]: {
-						...state.pools[pool],
+			(e.target as CoreCdsTreeItem).loading = true;
+			try {
+				const url = `${param.apiURL ?? ''}/truenas/api/v2.0/pool/dataset?pool=${pool.name}`;
+				const datasets = await fetchApi<TrueNAS.ZfsDataset[]>(
+					url,
+				);
+
+				if (datasets.length === 0) {
+					throw new Error('no dataset found');
+				}
+
+				setPools(pools => ({
+					...pools,
+					[pool.name]: {
+						...pools[pool.name],
 						children: datasets[0].children,
+						loaded: true,
 					},
-				},
-			}));
-		} catch (e: unknown) {
-			this.props.onError(
-				`Failed to list datasets of pool "${pool}": ${JSON.stringify(e)}`,
-			);
-		}
-	}
+				}));
+			} catch (e: unknown) {
+				onError(
+					`Failed to list datasets of pool "${pool.name}": ${JSON.stringify(e)}`,
+				);
+			}
+
+			(e.target as CoreCdsTreeItem).loading = false;
+		};
+
+	useEffect(() => {
+		const url = `${param.apiURL ?? ''}/truenas/api/v2.0/pool`;
+		fetchApi<TrueNAS.ZfsPool[]>(url)
+			.then(pools => {
+				setPools(pools.map(pool => ({[pool.name]: {...pool, loaded: false}})).reduce(reducerMergeObject, {}));
+			})
+			.catch((e: unknown) => {
+				onError(`Failed to list pools: ${JSON.stringify(e)}`);
+			});
+	}, []);
+
+	return (
+		<CdsTree>
+			{Object.keys(pools)
+				.map(pool => pools[pool])
+				.map(pool => (
+					<CdsTreeItem
+						key={pool.name}
+						expandable={
+							pool.status === 'ONLINE'
+							&& (!pools[pool.name].loaded || pool.children?.length > 0)
+						}
+						onExpandedChange={onExpandedChange(pool)}
+					>
+						<Pool pool={pool} />
+						<Datasets
+							datasets={pool.children ?? []}
+							currentValue={currentValue}
+							onValueChange={onValueChange}
+						/>
+					</CdsTreeItem>
+				))}
+		</CdsTree>
+	);
 }
 
 /**
