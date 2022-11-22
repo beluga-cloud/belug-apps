@@ -15,9 +15,13 @@
   "packageRules": [
     {
       "matchManagers": ["github-actions"],
-      "matchUpdateTypes": ["minor", "patch", "digest"],
+      "matchUpdateTypes": ["minor", "patch"],
       "groupName": "github-actions",
       "groupSlug": "github-actions"
-    }
+    },
+    {
+      "matchUpdateTypes": ["digest"],
+      "schedule": ["on the last day of the month"]
+    }    
   ]
 }
