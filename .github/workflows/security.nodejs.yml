@@ -16,6 +16,6 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           args: --sarif-file-output=snyk.sarif src/kubeapps-components
-      - uses: github/codeql-action/upload-sarif@f0a12816612c7306b485a22cb164feb43c6df818 # tag=codeql-bundle-20221024
+      - uses: github/codeql-action/upload-sarif@bab5a146ac6d7a082c88e24391b2b1fc4ac67ec0 # tag=codeql-bundle-20221024
         with:
           sarif_file: snyk.sarif
