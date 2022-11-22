@@ -60,17 +60,17 @@ func ProxyAction(log *zap.Logger) cli.ActionFunc {
 		r := mux.NewRouter()
 		r.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) { w.WriteHeader(http.StatusUnauthorized) })
 		r.MethodNotAllowedHandler = r.NotFoundHandler
-
-		r.Use(
-			func(handler http.Handler) http.Handler { return handlers.CombinedLoggingHandler(os.Stdout, handler) },
-			CacheMiddleware(CacheMaxAge, CacheSize),
-			NoCompressionMiddleware,
-		)
+		r.Use(func(handler http.Handler) http.Handler { return handlers.CombinedLoggingHandler(os.Stdout, handler) })
+		r.Methods(http.MethodGet).
+			Path("/healthz").
+			HandlerFunc(func(writer http.ResponseWriter, _ *http.Request) { writer.WriteHeader(http.StatusOK) })
 
 		// NOTE: here is where all required paths are allowed
 		// NOTE: TrueNAS dedicated paths
 		truenasRouter := r.PathPrefix("/truenas/").Subrouter()
 		truenasRouter.Use(
+			CacheMiddleware(CacheMaxAge, CacheSize),
+			NoCompressionMiddleware,
 			TrimPathPrefixMiddleware("/truenas"),
 			TruenasAuthMiddleware(truenasToken),
 		)
