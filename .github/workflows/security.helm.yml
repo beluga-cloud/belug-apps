@@ -4,6 +4,8 @@ on: # yamllint disable-line rule:truthy
   pull_request:
     types: [opened, synchronize]
     paths: ["charts/**"]
+  push:
+    branches: [main]
 
 jobs:
   check_helm_issue:

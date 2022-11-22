@@ -4,6 +4,8 @@ on: # yamllint disable-line rule:truthy
   pull_request:
     types: [opened, synchronize]
     paths: ["src/kubeapps-components/**/*"]
+  push:
+    branches: [main]
 
 jobs:
   check_nodejs_issue:
