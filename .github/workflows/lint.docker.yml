@@ -1,0 +1,15 @@
+---
+name: Lint (Docker)
+on: # yamllint disable-line rule:truthy
+  pull_request:
+    types: [opened, synchronize]
+    paths: ["src/api-proxy/Dockerfile"]
+
+jobs:
+  hadolint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
+      - uses: hadolint/hadolint-action@4b5806eb9c6bee4954fc0e0cc3ad6175fc9782c1 # tag=v3.0.0
+        with:
+          dockerfile: src/api-proxy/Dockerfile
