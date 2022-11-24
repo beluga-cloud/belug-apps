@@ -14,14 +14,36 @@
   ],
   "packageRules": [
     {
-      "matchManagers": ["github-actions"],
-      "matchUpdateTypes": ["minor", "patch"],
+      "matchManagers": [
+        "github-actions"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
       "groupName": "github-actions",
       "groupSlug": "github-actions"
     },
     {
-      "matchUpdateTypes": ["digest"],
-      "schedule": ["on the last day of the month"]
-    }    
-  ]
+      "matchUpdateTypes": [
+        "digest"
+      ],
+      "schedule": [
+        "on the last day of the month"
+      ]
+    }
+  ],
+  "regexManagers": [
+    {
+      "fileMatch": [
+        "charts\\/.*\\.ya?ml"
+      ],
+      "matchStrings": [
+        "#\\s*renovate:\\s*datasource=(?<datasource>.*?)( versioning=(?<versioning>.*?))?\\s+source:\\soci://(?<depName>.*?)\\s+version:\\s\"?(?<currentValue>[^\"\\s]*)\"?\\s"
+      ]
+    }
+  ],
+  "registryAliases": {
+    "bitnami": "https://charts.bitnami.com/bitnami"
+  }
 }
