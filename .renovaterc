@@ -39,7 +39,7 @@
         "charts\\/.*\\.ya?ml"
       ],
       "matchStrings": [
-        "#\\s*renovate:\\s*datasource=(?<datasource>.*?)( versioning=(?<versioning>.*?))?\\s+source:\\soci://(?<depName>.*?)\\s+version:\\s\"?(?<currentValue>[^\"\\s]*)\"?\\s"
+        "#\\s*renovate:\\s*datasource=(?<datasource>.*?) depName=(?<depName>.*?)( versioning=(?<versioning>.*?))?\\s.*?version: ?\"?(?<currentValue>[^\"\\s]*)\"?\\s"
       ]
     }
   ],
