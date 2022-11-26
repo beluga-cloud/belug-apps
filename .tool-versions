@@ -1,0 +1,5 @@
+golang 1.19.2
+helm 3.10.0
+kind 0.17.0
+kubectl 1.25.2
+nodejs 18.10.0
