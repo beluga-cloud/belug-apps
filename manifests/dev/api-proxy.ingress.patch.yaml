@@ -1,0 +1,8 @@
+# Disable TLS on the ingress (no TLS for development environment)
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: api-proxy
+spec:
+  tls: null
