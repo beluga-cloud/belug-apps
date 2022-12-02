@@ -63,6 +63,27 @@ questions:
                               type: string
                               valid_chars: '^--.+$'
 
+        - variable: ix_truenas
+          label: TrueNAS Scale Integration
+          description: Configure Belug-Apps to works with TrueNAS Scale API
+          schema:
+            additional_attrs: true
+            type: dict
+            attrs:
+              - variable: host
+                label: TrueNAS Scale API URL
+                description: TrueNAS Scale API URL used by Belug-Apps to fetch some information like datasets or pool list.
+                schema:
+                  type: string
+                  required: true
+              - variable: token
+                label: TrueNAS Scale API Token
+                description: TrueNAS Scale API token used to allow Belug-Apps to use the TrueNAS API.
+                schema:
+                  type: string
+                  private: true
+                  required: true
+
         - variable: ix_portal
           label: KubeApps Portal
           description: Configure the KubeApps Portal ingress
@@ -80,12 +101,6 @@ questions:
                       schema:
                         type: string
                         default: ""
-                        required: true
-                    - variable: path
-                      label: Path
-                      schema:
-                        type: string
-                        default: /
                         required: true
 
               - variable: extraHosts
@@ -105,12 +120,6 @@ questions:
                             schema:
                               type: string
                               default: ""
-                              required: true
-                          - variable: path
-                            label: Path
-                            schema:
-                              type: string
-                              default: /
                               required: true
 
               - variable: tls
