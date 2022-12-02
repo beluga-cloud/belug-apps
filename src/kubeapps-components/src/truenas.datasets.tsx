@@ -19,7 +19,7 @@ import {CdsIcon} from '@cds/react/icon';
 import {CdsTag} from '@cds/react/tag';
 import {CdsTree, CdsTreeItem} from '@cds/react/tree-view';
 
-import type * as TrueNAS from './truenas.types';
+import type* as TrueNAS from './truenas.types';
 import {type ComponentParamProps} from './types.interface';
 import {bytesToString, reducerMergeObject} from './utils';
 
