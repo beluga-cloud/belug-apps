@@ -225,7 +225,7 @@ vcluster:
           repo: https://charts.bitnami.com/bitnami
           name: kubeapps
           # renovate datasource=helm depName=bitnami/kubeapps versioning=semver
-          version: 10.3.5
+          version: 12.1.1
         release:
           name: kubeapps
           namespace: kubeapps-system
