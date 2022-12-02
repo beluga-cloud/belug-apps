@@ -5,4 +5,4 @@ just 1.9.0
 kind 0.17.0
 kubectl 1.25.2
 kustomize 4.5.7
-nodejs 18.10.0
+nodejs 18.12.1
