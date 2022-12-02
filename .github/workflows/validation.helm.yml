@@ -1,0 +1,23 @@
+---
+name: Validate values.yml (Helm)
+on: # yamllint disable-line rule:truthy
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
+      - uses: asdf-vm/actions/install@707e84f3ee349548310aeabdad0dd3bfcb9b69fa # tag=v1.1.0
+      - run: just build
+      - uses: tj-actions/verify-changed-files@a3391b5a01114c49c3a8d55181a9ff4c99bf0db7 # tag=v12
+        id: verify-changed-files
+        with:
+          files: |
+            charts/belug-apps/values.yaml
+      - if: steps.verify-changed-files.outputs.files_changed == 'true'
+        run: |
+          # shellcheck disable=SC2016
+          echo '::error ::"values.yml" has changed and must be rebuilt... run `just build` and commit the changes'
+          exit 1
