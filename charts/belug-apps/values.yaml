@@ -219,6 +219,9 @@ vcluster:
         name: kubeapps-operator-token
         namespace: default
       type: kubernetes.io/service-account-token
+      ---
+      # [inject] kubernetes manifests
+      # [end inject] kubernetes manifests
 
     helm:
       - chart:
@@ -269,6 +272,9 @@ vcluster:
                 secretName: {{ printf "%v-tls-ixcert-%v" $.Release.Name .scaleCert }}
             {{- end }}
             {{- end }}
+          dashboard:
+            # [inject] kubeapps component
+            # [end inject] kubeapps component
 
   # Additional configuration used by Belug-Apps to manage the access to KubeApps directly
   # through TrueNAS Scale interface.
