@@ -157,6 +157,7 @@ vcluster:
       ---
     manifestsTemplate: |
       {{- $ := . -}}
+      {{- with lookup "storage.k8s.io/v1" "StorageClass" "" "openebs-zfspv-default" }}
       ---
       # Manage default StorageClass based on the current Belug-Apps poolname
       apiVersion: storage.k8s.io/v1
@@ -164,39 +165,42 @@ vcluster:
       metadata:
         annotations:
           storageclass.kubernetes.io/is-default-class: "true"
+        labels:
+          app.kubernetes.io/managed-by: {{ $.Release.Service | quote }}
+          app.kubernetes.io/instance: {{ $.Release.Name | quote }}
+          helm.sh/chart: "{{ $.Chart.Name }}-{{ $.Chart.Version }}"
         name: ix-truenas-zfspv-default
       allowVolumeExpansion: true
       parameters:
         fstype: zfs
-        {{- with lookup "storage.k8s.io/v1" "StorageClass" "" "openebs-zfspv-default" }}
         poolname: {{ (printf "%s/releases/%s/volumes" (.parameters.poolname | dir) $.Release.Name) }}
-        {{- end }}
         shared: "yes"
       provisioner: zfs.csi.openebs.io
       reclaimPolicy: Retain
       volumeBindingMode: Immediate
+      {{- end }}
       ---
       # Manage default user for KubeApps (cluster-admin)
       apiVersion: v1
       kind: ServiceAccount
       metadata:
-        name: kubeapps-operator
-        namespace: default
         labels:
           app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
           app.kubernetes.io/instance: {{ .Release.Name | quote }}
-          app.kubernetes.io/version: {{ .Chart.AppVersion }}
+          app.kubernetes.io/version: {{ .Chart.Version }}
           helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+        name: kubeapps-operator
+        namespace: default
       ---
       apiVersion: rbac.authorization.k8s.io/v1
       kind: ClusterRoleBinding
       metadata:
-        name: kubeapps-operator
         labels:
           app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
           app.kubernetes.io/instance: {{ .Release.Name | quote }}
-          app.kubernetes.io/version: {{ .Chart.AppVersion }}
+          app.kubernetes.io/version: {{ .Chart.Version }}
           helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+        name: kubeapps-operator
       roleRef:
         apiGroup: rbac.authorization.k8s.io
         kind: ClusterRole
@@ -209,11 +213,11 @@ vcluster:
       apiVersion: v1
       kind: Secret
       metadata:
-        name: kubeapps-operator-token
-        namespace: default
         annotations:
           kubernetes.io/service-account.name: kubeapps-operator
           vcluster.loft.sh/force-sync: "true"
+        name: kubeapps-operator-token
+        namespace: default
       type: kubernetes.io/service-account-token
 
     helm:
@@ -242,12 +246,12 @@ vcluster:
           ingress:
             enabled: true
             hostname: {{ .Values.ix_portal.main.host }}
-            path: {{ .Values.ix_portal.main.path }}
+            path: /
 
             extraHosts:
             {{- range .Values.ix_portal.extraHosts }}
               - name: .host
-                path: .path
+                path: /
             {{- end }}
 
             annotations:
@@ -271,4 +275,7 @@ vcluster:
   ix_portal:
     main:
       host: kubeapps.local
-      path: /
+
+  # Additional configuration used by Belug-Apps to manage the access to KubeApps directly
+  # through TrueNAS Scale interface.
+  ix_truenas: {}
