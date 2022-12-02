@@ -6,7 +6,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "webpack --mode=production",
+    "build": "webpack",
     "lint": "eslint",
     "lint:ci": "eslint --output-file eslint_report.json --format json",
     "lint:repair": "eslint --fix"

@@ -1,0 +1,6 @@
+---
+vcluster:
+  sync:
+    # disable volume snapshots (not available on kind clusters)
+    volumesnapshots:
+      enabled: false
