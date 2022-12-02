@@ -1,0 +1,58 @@
+# Override TRUENAS_* configuration with localhost and deploy a TrueNAS API mock
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: belugapps-proxy
+spec:
+  template:
+    spec:
+      containers:
+        - env:
+            - name: TRUENAS_URL
+              value: http://localhost:3000
+              valueFrom: null
+            - name: TRUENAS_TOKEN
+              value: ix-token
+              valueFrom: null
+          image: ocr.local/belug-apps/api-proxy:dev
+          name: proxy
+        - image: ocr.local/belug-apps/truenas-api:dev
+          livenessProbe:
+            failureThreshold: 6
+            httpGet:
+              path: /healthz
+              port: http
+              scheme: HTTP
+            periodSeconds: 15
+            successThreshold: 1
+            timeoutSeconds: 5
+          name: truenas-mock
+          ports:
+            - containerPort: 3000
+              name: http
+              protocol: TCP
+          readinessProbe:
+            failureThreshold: 6
+            httpGet:
+              path: /healthz
+              port: http
+              scheme: HTTP
+            periodSeconds: 15
+            successThreshold: 1
+            timeoutSeconds: 5
+          resources:
+            limits:
+              cpu: 100m
+              memory: 250Mi
+            requests:
+              cpu: 15m
+              memory: 250Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            runAsGroup: 1000
+            runAsNonRoot: true
+            runAsUser: 1000

@@ -1,0 +1,25 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+  labels:
+    app.kubernetes.io/component: api-proxy
+  name: api-proxy
+spec:
+  rules:
+    - host: '{{ .Values.ix_portal.main.host }}'
+      http:
+        paths:
+          - backend:
+              service:
+                name: api-proxy
+                port:
+                  name: http
+            path: /truenas
+            pathType: ImplementationSpecific
+  tls:
+    - hosts:
+        - '{{ .Values.ix_portal.main.host }}'
+      secretName: '{{ printf "%v-tls-ixcert-%v" $.Release.Name .scaleCert }}'

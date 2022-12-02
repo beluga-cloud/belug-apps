@@ -1,0 +1,8 @@
+golang 1.19.2
+helm 3.10.0
+jq 1.6
+just 1.9.0
+kind 0.17.0
+kubectl 1.25.2
+kustomize 4.5.7
+nodejs 18.10.0

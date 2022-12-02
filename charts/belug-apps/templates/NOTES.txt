@@ -1,0 +1,18 @@
+
+** Please be patient while the chart is being deployed **
+
+Tip:
+  Watch the deployment status using the command: kubectl get pods -w --namespace {{ .Release.Namespace }}
+
+
+To access Kubeapps (project on which Belug-Apps is based), follow the steps below:
+
+1. Get the Kubeapp URL that you configured inside the `values.yml` (http://{{ .Values.vcluster.ix_portal.main.host }})
+
+2. Get the Kubeapp access token generated during the installation process:
+  $ kubectl --namespace {{ .Release.Namespace }} get secret kubeapps-operator-token-x-default-x-{{ .Release.Name }} --template={{ "{{.data.token}}" }} | base64 -d
+
+3. Open a browser and access Kubeapps using the obtained URL and the access token.
+
+
+Thank you for installing Belug-Apps ({{ .Release.Name }}).

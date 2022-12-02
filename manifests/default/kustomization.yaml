@@ -1,0 +1,9 @@
+---
+namespace: kubeapps-system
+resources:
+  - api-proxy.deployment.yaml
+  - api-proxy.ingress.yaml
+  - namespace.yaml
+  - truenas-creds.secret.yaml
+transformers:
+  - common.labels.yaml

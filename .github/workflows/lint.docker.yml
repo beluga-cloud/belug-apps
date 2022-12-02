@@ -3,13 +3,32 @@ name: Lint (Docker)
 on: # yamllint disable-line rule:truthy
   pull_request:
     types: [opened, synchronize]
-    paths: ["src/api-proxy/Dockerfile"]
+    paths: ["**/Dockerfile"]
 
 jobs:
+  list-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      dockerfiles: ${{ steps.filter.outputs.dockerfile_files }}
+    steps:
+      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
+      - uses: dorny/paths-filter@4512585405083f25c027a35db413c2b3b9006d50 # tag=v2.11.1
+        id: filter
+        with:
+          filters: |
+            dockerfile:
+              - added|modified: '**/Dockerfile'
+          list-files: json
+
   hadolint:
     runs-on: ubuntu-latest
+    needs: [list-changes]
+    strategy:
+      fail-fast: true
+      matrix:
+        dockerfile: ${{ fromJSON(needs.list-changes.outputs.dockerfiles) }}
     steps:
       - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
       - uses: hadolint/hadolint-action@4b5806eb9c6bee4954fc0e0cc3ad6175fc9782c1 # tag=v3.0.0
         with:
-          dockerfile: src/api-proxy/Dockerfile
+          dockerfile: ${{ matrix.dockerfile }}

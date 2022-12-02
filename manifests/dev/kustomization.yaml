@@ -1,0 +1,8 @@
+---
+resources:
+  - ../default/
+  - default.storageClass.yml
+
+patchesStrategicMerge:
+  - api-proxy.deployment.patch.yaml
+  - api-proxy.ingress.patch.yaml

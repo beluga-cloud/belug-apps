@@ -1,0 +1,10 @@
+{
+  "name": "truenas-api-mock",
+  "version": "1.0.0",
+  "scripts": {
+    "serve": "mockoon-cli start --data ./mockoon.data.json"
+  },
+  "devDependencies": {
+    "@mockoon/cli": "^2.2.1"
+  }
+}
