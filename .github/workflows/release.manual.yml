@@ -46,14 +46,14 @@ jobs:
         run: |
           latest="$(git tag --list | sort --version-sort --reverse | head --lines=1)"
           next="$(semver bump ${{ inputs.type }} "${latest}")"
-          echo >> "${GITHUB_OUTPUT}" "next=v$(semver bump prerel rc.. "${next}")"
+          echo >> "${GITHUB_OUTPUT}" "next=$(semver bump prerel rc.. "${next}")"
 
       - name: Bump version to the next ${{ inputs.type }} release
         if: ${{ ! inputs.isPreRelease }}
         id: semver
         run: |
           latest="$(git tag --list | sort --version-sort --reverse | head --lines=1)"
-          echo >> "${GITHUB_OUTPUT}" "next=v$(semver bump ${{ inputs.type }} "${latest}")"
+          echo >> "${GITHUB_OUTPUT}" "next=$(semver bump ${{ inputs.type }} "${latest}")"
 
   release:
     uses: ./.github/workflows/release.workflow.yml
