@@ -10,7 +10,7 @@ on: # yamllint disable-line rule:truthy
 jobs:
   bump_version:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged && github.head_ref == 'main'
+    if: github.event.pull_request.merged && github.base_ref == 'main'
     outputs:
       release_version: ${{ steps.semver.outputs.next }}
     steps:
