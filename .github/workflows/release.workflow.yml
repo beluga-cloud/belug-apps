@@ -83,19 +83,10 @@ jobs:
         run: git-chglog --next-tag v${{ inputs.version }} > CHANGELOG.md
 
       # NOTE: commit all changes
-      - name: Tag Belug-Apps v${{ inputs.version }}
-        run: |
-          git config --global user.name "Belug Apps"
-          git config --global user.email "116495032+belug-apps[bot]@users.noreply.github.com"
-
-          git commit --all --signoff --message "Release Belug-Apps v${{ inputs.version }}"
-          git tag "v${{ inputs.version }}"
-          git push --follow-tags
-      # - uses: EndBug/add-and-commit@61a88be553afe4206585b31aa72387c64295d08b # tag=v9.1.1
-      #   with:
-      #     author_name: Belug Apps
-      #     author_email: 116495032+belug-apps[bot]@users.noreply.github.com
-      #     message: Release Belug-Apps v${{ inputs.version }}
-      #     push: ${{ ! inputs.dryRun }}
-      #     tag: v${{ inputs.version }}
-      #     github_token: ${{ steps.app_auth.outputs.token }}
+      - uses: EndBug/add-and-commit@61a88be553afe4206585b31aa72387c64295d08b # tag=v9.1.1
+        with:
+          author_name: belug-apps[bot]
+          author_email: 116495032+belug-apps[bot]@users.noreply.github.com
+          message: Release Belug-Apps v${{ inputs.version }}
+          push: ${{ ! inputs.dryRun }}
+          tag: v${{ inputs.version }}
