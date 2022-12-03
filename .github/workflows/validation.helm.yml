@@ -9,7 +9,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
-      - uses: asdf-vm/actions/install@707e84f3ee349548310aeabdad0dd3bfcb9b69fa # tag=v1.1.0
+
+      - uses: asdf-vm/actions/setup@33040b4b4f1df2824ee4a3c35c5c688bd0103e75 # tag=v1.1.0
+      - uses: actions/cache@9b0c1fce7a93df8e3bb8926b0d6e9d89e92f20a7 # tag=v3.0.11
+        with:
+          path: ${{ env.ASDF_DIR }}
+          key: ${{ runner.os }}-asdf-${{ hashFiles('**/.tool-versions') }}
+          restore-keys: |
+            ${{ runner.os }}-asdf-
+      - uses: asdf-vm/actions/install@33040b4b4f1df2824ee4a3c35c5c688bd0103e75 # tag=v1.1.0
+
       - run: just build
       - uses: tj-actions/verify-changed-files@a3391b5a01114c49c3a8d55181a9ff4c99bf0db7 # tag=v12
         id: verify-changed-files
