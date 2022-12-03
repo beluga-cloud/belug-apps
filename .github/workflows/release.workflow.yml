@@ -48,10 +48,17 @@ jobs:
     name: Update `belug-apps` repository (v${{ inputs.version }})
     runs-on: ubuntu-latest
     steps:
+      - uses: tibdex/github-app-token@021a2405c7f990db57f5eae5397423dcc554159c # tag=1.7.0
+        id: app_auth
+        with:
+          app_id: ${{ secrets.BOT_ID }}
+          private_key: ${{ secrets.BOT_PKEY }}
+
       - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
         with:
           fetch-depth: 0
           ref: ${{ inputs.ref }}
+          token: ${{ steps.app_auth.outputs.token }}
       - uses: asdf-vm/actions/install@707e84f3ee349548310aeabdad0dd3bfcb9b69fa # tag=v1.1.0
 
       # NOTE: update all versions inside Chart.yaml
