@@ -49,7 +49,7 @@ jobs:
           echo >> "${GITHUB_OUTPUT}" "next=v$(semver bump prerel rc.. "${next}")"
 
       - name: Bump version to the next ${{ inputs.type }} release
-        if: ! inputs.isPreRelease
+        if: ${{ ! inputs.isPreRelease }}
         id: semver
         run: |
           latest="$(git tag --list | sort --version-sort --reverse | head --lines=1)"
