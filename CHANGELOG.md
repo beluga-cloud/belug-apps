@@ -2,6 +2,12 @@
 ## [Unreleased]
 
 
+<a name="v0.0.1-rc.2"></a>
+## [v0.0.1-rc.2] - 2022-12-03
+### Chore
+- **renovate:** add a better pre-release management
+
+
 <a name="v0.0.1-rc.1"></a>
 ## [v0.0.1-rc.1] - 2022-12-03
 ### Chore
@@ -157,5 +163,6 @@
 - Merge pull request [#1](https://github.com/belug-apps/belug-apps/issues/1) from belug-apps/feat/add-github-actions
 
 
-[Unreleased]: https://github.com/belug-apps/belug-apps/compare/v0.0.1-rc.1...HEAD
+[Unreleased]: https://github.com/belug-apps/belug-apps/compare/v0.0.1-rc.2...HEAD
+[v0.0.1-rc.2]: https://github.com/belug-apps/belug-apps/compare/v0.0.1-rc.1...v0.0.1-rc.2
 [v0.0.1-rc.1]: https://github.com/belug-apps/belug-apps/compare/v0.0.0...v0.0.1-rc.1
