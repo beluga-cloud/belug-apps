@@ -2,22 +2,28 @@
 ## [Unreleased]
 
 
-<a name="v0.0.2-rc.1"></a>
-## [v0.0.2-rc.1] - 2022-12-03
+<a name="v0.1.0-rc.1"></a>
+## [v0.1.0-rc.1] - 2022-12-03
 ### Chore
 - update and fix upgrade issues
+- configure CHANGELOG generators
 - **charts:** add dynamically injected values
+- **deps:** update github/codeql-action digest to 62b14cb
+- **deps:** update actions/setup-go action to v3.4.0
+- **deps:** lock file maintenance
+- **deps:** update dependency helm to v3.10.2
 - **deps:** lock file maintenance
 - **deps:** update dependency golang to v1.19.3
 - **deps:** update dependency node to v18.12.1
-- **deps:** update actions/setup-go action to v3.4.0
-- **deps:** update dependency helm to v3.10.2
-- **deps:** update github/codeql-action digest to 62b14cb
 - **develop:** add JUSTFILE to manage development environment
 - **github-actions:** validate 'values.yml' file
 - **renovate:** fix Renovate configuration
 - **renovate:** add configuration for Kubeapps update
 - **tools:** add all required tools for the development environment
+- **workflows:** add main release workflow
+- **workflows:** add manual release workflow
+- **workflows:** add post-merge release workflow
+- **workflows:** add ASDF cache to speedup workflows
 
 ### Feat
 - **charts:** update Kubeapps to latest release
@@ -29,11 +35,23 @@
 ### Fix
 - **api-proxy:** listen on 0.0.0.0 by default
 - **deps:** update module go.uber.org/zap to v1.24.0
+- **workflows:** pass github token to push step
+- **workflows:** pass secrets to workflow_dispatch
+- **workflows:** use bot access token to push on protected branches
+- **workflows:** check base_ref instead of head_ref
+- **workflows:** use git push directly instead of actions
+- **workflows:** fix YAML issue
 
 ### Test
 - **truenas:** mock TrueNAS API for e2e tests
 
 ### Pull Requests
+- Merge pull request [#45](https://github.com/belug-apps/belug-apps/issues/45) from belug-apps/fix/post-merge-workflow
+- Merge pull request [#44](https://github.com/belug-apps/belug-apps/issues/44) from belug-apps/fix/post-merge-workflow
+- Merge pull request [#43](https://github.com/belug-apps/belug-apps/issues/43) from belug-apps/fix/post-merge-workflow
+- Merge pull request [#42](https://github.com/belug-apps/belug-apps/issues/42) from belug-apps/fix/post-merge-workflow
+- Merge pull request [#41](https://github.com/belug-apps/belug-apps/issues/41) from belug-apps/feat/release-workflows
+- Merge pull request [#40](https://github.com/belug-apps/belug-apps/issues/40) from belug-apps/renovate/lock-file-maintenance
 - Merge pull request [#30](https://github.com/belug-apps/belug-apps/issues/30) from belug-apps/renovate/lock-file-maintenance
 - Merge pull request [#37](https://github.com/belug-apps/belug-apps/issues/37) from belug-apps/renovate/golang-1.x
 - Merge pull request [#38](https://github.com/belug-apps/belug-apps/issues/38) from belug-apps/renovate/helm-3.x
@@ -138,5 +156,5 @@
 - Merge pull request [#1](https://github.com/belug-apps/belug-apps/issues/1) from belug-apps/feat/add-github-actions
 
 
-[Unreleased]: https://github.com/belug-apps/belug-apps/compare/v0.0.2-rc.1...HEAD
-[v0.0.2-rc.1]: https://github.com/belug-apps/belug-apps/compare/v0.0.0...v0.0.2-rc.1
+[Unreleased]: https://github.com/belug-apps/belug-apps/compare/v0.1.0-rc.1...HEAD
+[v0.1.0-rc.1]: https://github.com/belug-apps/belug-apps/compare/v0.0.0...v0.1.0-rc.1
