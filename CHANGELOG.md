@@ -2,19 +2,19 @@
 ## [Unreleased]
 
 
-<a name="v0.1.0-rc.1"></a>
-## [v0.1.0-rc.1] - 2022-12-03
+<a name="v0.0.1-rc.1"></a>
+## [v0.0.1-rc.1] - 2022-12-03
 ### Chore
 - update and fix upgrade issues
 - configure CHANGELOG generators
 - **charts:** add dynamically injected values
 - **deps:** update github/codeql-action digest to 62b14cb
+- **deps:** update dependency golang to v1.19.3
+- **deps:** update dependency node to v18.12.1
+- **deps:** lock file maintenance
 - **deps:** update actions/setup-go action to v3.4.0
 - **deps:** lock file maintenance
 - **deps:** update dependency helm to v3.10.2
-- **deps:** lock file maintenance
-- **deps:** update dependency golang to v1.19.3
-- **deps:** update dependency node to v18.12.1
 - **develop:** add JUSTFILE to manage development environment
 - **github-actions:** validate 'values.yml' file
 - **renovate:** fix Renovate configuration
@@ -24,6 +24,7 @@
 - **workflows:** add manual release workflow
 - **workflows:** add post-merge release workflow
 - **workflows:** add ASDF cache to speedup workflows
+- **workflows:** use actions to commit release
 
 ### Feat
 - **charts:** update Kubeapps to latest release
@@ -156,5 +157,5 @@
 - Merge pull request [#1](https://github.com/belug-apps/belug-apps/issues/1) from belug-apps/feat/add-github-actions
 
 
-[Unreleased]: https://github.com/belug-apps/belug-apps/compare/v0.1.0-rc.1...HEAD
-[v0.1.0-rc.1]: https://github.com/belug-apps/belug-apps/compare/v0.0.0...v0.1.0-rc.1
+[Unreleased]: https://github.com/belug-apps/belug-apps/compare/v0.0.1-rc.1...HEAD
+[v0.0.1-rc.1]: https://github.com/belug-apps/belug-apps/compare/v0.0.0...v0.0.1-rc.1
