@@ -54,3 +54,4 @@ jobs:
       version: ${{ needs.bump_version.outputs.release_version }}
       ref: ${{ github.ref_name }}
       dryRun: ${{ inputs.dryRun }}
+    secrets: inherit
