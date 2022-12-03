@@ -45,7 +45,7 @@ jobs:
 
           # NOTE: if no RC are found, we will create a new one based on the next minor
           #       release
-          grep -- '-rc' <<<${tag} > /dev/null || tag=$(semver bump minor "${tag}")
+          grep -- '-rc' <<<"${tag}" > /dev/null || tag="$(semver bump minor "${tag}")"
 
           echo >> "${GITHUB_OUTPUT}" "next=$(semver bump prerel rc.. "${tag}")"
 
