@@ -1,0 +1,76 @@
+---
+name: Release Belug-Apps (Workflow)
+on: # yamllint disable-line rule:truthy
+  workflow_call:
+    inputs:
+      version:
+        description: Release version.
+        required: true
+        type: string
+      ref:
+        description: The branch, tag or SHA to release.
+        default: main
+        type: string
+      dryRun:
+        description: Run the workflow without creating any release?
+        default: false
+        type: boolean
+
+jobs:
+  build_image:
+    name: Release `ghcr.io/belug-apps/api-proxy` (v${{ inputs.version }})
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
+      - uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a # tag=v2.1.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/metadata-action@57396166ad8aefe6098280995947635806a0e6ea # tag=v4.1.1
+        id: meta
+        with:
+          images: ghcr.io/belug-apps/api-proxy
+          tags: ${{ inputs.version }}
+          labels: |
+            org.opencontainers.image.title=Belug-Apps API proxy
+            org.opencontainers.image.description=Proxy allowing access to APIs such as TrueNAS without authentication but limiting access only to what is needed.
+
+          bake-target: belug-apps_api-proxy
+      - uses: docker/bake-action@6c87dcca988e4e074e3ab1f976a70f63ec9673fb # tag=v2.3.0
+        with:
+          workdir: src/api-proxy/
+          files: ${{ steps.meta.outputs.bake-file }}
+          targets: belug-apps_api-proxy
+          push: ${{ ! inputs.dryRun }}
+
+  update_repo:
+    name: Update `belug-apps` repository (v${{ inputs.version }})
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
+        with:
+          fetch-depth: 0
+          ref: ${{ inputs.ref }}
+      - uses: asdf-vm/actions/install@707e84f3ee349548310aeabdad0dd3bfcb9b69fa # tag=v1.1.0
+
+      # NOTE: update all versions inside Chart.yaml
+      - name: Bump `charts/belug-apps/Chart.yaml` to ${{ inputs.version }}
+        run: |
+          sed --regexp-extended 's/^((app)?[vV]ersion).+/\1: ${{ inputs.version }}/g' charts/belug-apps/Chart.yaml
+
+      # NOTE: rebuild components & manifests and inject them to `charts/belug-apps/values.yaml`
+      - name: Release components & manifests
+        run: just build
+
+      # NOTE: generate changelog
+      - run: git-chglog --next-tag v${{ inputs.version }} > CHANGELOG.md
+
+      # NOTE: commit all changes
+      - uses: EndBug/add-and-commit@61a88be553afe4206585b31aa72387c64295d08b # tag=v9.1.1
+        with:
+          author_name: Belug Apps
+          author_email: 116495032+belug-apps[bot]@users.noreply.github.com
+          message: Release Belug-Apps v${{ inputs.version }}
+          push: ${{ ! inputs.dryRun }}
+          tag: v${{ inputs.version }}

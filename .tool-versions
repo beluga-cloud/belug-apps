@@ -7,3 +7,4 @@ kind 0.17.0
 kubectl 1.25.2
 kustomize 4.5.7
 nodejs 18.12.1
+semver 3.4.0
