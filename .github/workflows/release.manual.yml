@@ -1,0 +1,56 @@
+---
+name: Release Belug-Apps (Manual)
+on: # yamllint disable-line rule:truthy
+  workflow_dispatch:
+    inputs:
+      type:
+        description: Is a MAJOR, MINOR or PATCH release?
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+      isPreRelease:
+        description: Is a pre-release?
+        default: false
+        type: boolean
+      dryRun:
+        description: Run the workflow without creating any release?
+        default: false
+        type: boolean
+
+jobs:
+  bump_version:
+    runs-on: ubuntu-latest
+    outputs:
+      release_version: ${{ steps.semver-pre.outputs.next || steps.semver.outputs.next }}
+    steps:
+      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
+        with:
+          # NOTE: fetch all commits and tags
+          fetch-depth: "0"
+      - uses: asdf-vm/actions/install@33040b4b4f1df2824ee4a3c35c5c688bd0103e75
+
+      - name: Bump version to the next ${{ inputs.type }} pre-release
+        if: inputs.isPreRelease
+        id: semver-pre
+        run: |
+          latest="$(git tag --list | sort --version-sort --reverse | head --lines=1)"
+          next="$(semver bump ${{ inputs.type }} "${latest}")"
+          echo >> "${GITHUB_OUTPUT}" "next=v$(semver bump prerel rc.. "${next}")"
+
+      - name: Bump version to the next ${{ inputs.type }} release
+        if: ! inputs.isPreRelease
+        id: semver
+        run: |
+          latest="$(git tag --list | sort --version-sort --reverse | head --lines=1)"
+          echo >> "${GITHUB_OUTPUT}" "next=v$(semver bump ${{ inputs.type }} "${latest}")"
+
+  release:
+    uses: ./.github/workflows/release.workflow.yml
+    needs: [bump_version]
+    with:
+      version: ${{ needs.bump_version.outputs.release_version }}
+      ref: ${{ github.ref_name }}
+      dryRun: ${{ inputs.dryRun }}
