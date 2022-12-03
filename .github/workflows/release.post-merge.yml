@@ -1,0 +1,36 @@
+---
+name: Release Belug-Apps (Post Merge)
+on: # yamllint disable-line rule:truthy
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
+
+jobs:
+  bump_version:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged && github.head_ref == 'main'
+    outputs:
+      release_version: ${{ steps.semver.outputs.next }}
+    steps:
+      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
+        with:
+          # NOTE: fetch all commits and tags
+          fetch-depth: "0"
+      - uses: asdf-vm/actions/install@33040b4b4f1df2824ee4a3c35c5c688bd0103e75
+
+      - name: Bump version to the next minor pre-release
+        id: semver
+        run: |
+          latest="$(git tag --list | sort --version-sort --reverse | head --lines=1)"
+          next="$(semver bump minor "${latest}")"
+          echo >> "${GITHUB_OUTPUT}" "next=$(semver bump prerel rc.. "${next}")"
+
+  release:
+    uses: ./.github/workflows/release.workflow.yml
+    needs: [bump_version]
+    with:
+      version: ${{ needs.bump_version.outputs.release_version }}
+      ref: main
+      dryRun: false
