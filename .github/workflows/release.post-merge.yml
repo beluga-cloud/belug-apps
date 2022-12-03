@@ -34,3 +34,4 @@ jobs:
       version: ${{ needs.bump_version.outputs.release_version }}
       ref: main
       dryRun: false
+    secrets: inherit
