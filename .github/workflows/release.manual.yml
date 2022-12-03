@@ -8,13 +8,10 @@ on: # yamllint disable-line rule:truthy
         required: true
         type: choice
         options:
+          - pre-release
           - patch
           - minor
           - major
-      isPreRelease:
-        description: Is a pre-release?
-        default: false
-        type: boolean
       dryRun:
         description: Run the workflow without creating any release?
         default: false
@@ -40,20 +37,25 @@ jobs:
             ${{ runner.os }}-asdf-
       - uses: asdf-vm/actions/install@33040b4b4f1df2824ee4a3c35c5c688bd0103e75 # tag=v1.1.0
 
-      - name: Bump version to the next ${{ inputs.type }} pre-release
-        if: inputs.isPreRelease
+      - name: Bump version to the next ${{ inputs.type }}
+        if: inputs.type == 'pre-release'
         id: semver-pre
         run: |
-          latest="$(git tag --list | sort --version-sort --reverse | head --lines=1)"
-          next="$(semver bump ${{ inputs.type }} "${latest}")"
-          echo >> "${GITHUB_OUTPUT}" "next=$(semver bump prerel rc.. "${next}")"
+          tag="$(git tag --list | sort --version-sort --reverse | head --lines=1)"
 
-      - name: Bump version to the next ${{ inputs.type }} release
-        if: ${{ ! inputs.isPreRelease }}
+          # NOTE: if no RC are found, we will create a new one based on the next minor
+          #       release
+          grep -- '-rc' <<<${tag} > /dev/null || tag=$(semver bump minor "${tag}")
+
+          echo >> "${GITHUB_OUTPUT}" "next=$(semver bump prerel rc.. "${tag}")"
+
+      - name: Bump version to the next ${{ inputs.type }}
+        if: inputs.type != 'pre-release'
         id: semver
         run: |
-          latest="$(git tag --list | sort --version-sort --reverse | head --lines=1)"
-          echo >> "${GITHUB_OUTPUT}" "next=$(semver bump ${{ inputs.type }} "${latest}")"
+          tag="$(git tag --list | sort --version-sort --reverse | head --lines=1)"
+
+          echo >> "${GITHUB_OUTPUT}" "next=$(semver bump ${{ inputs.type }} "${tag}")"
 
   release:
     uses: ./.github/workflows/release.workflow.yml

@@ -28,12 +28,17 @@ jobs:
             ${{ runner.os }}-asdf-
       - uses: asdf-vm/actions/install@33040b4b4f1df2824ee4a3c35c5c688bd0103e75 # tag=v1.1.0
 
-      - name: Bump version to the next minor pre-release
+      - name: Bump version to the next pre-release
         id: semver
         run: |
-          latest="$(git tag --list | sort --version-sort --reverse | head --lines=1)"
-          next="$(semver bump minor "${latest}")"
-          echo >> "${GITHUB_OUTPUT}" "next=$(semver bump prerel rc.. "${next}")"
+          tag="$(git tag --list | sort --version-sort --reverse | head --lines=1)"
+
+          # NOTE: if no RC are found, we will create a new one based on the next minor
+          #       release
+          grep -- '-rc' <<<${tag} > /dev/null || tag=$(semver bump minor "${tag}")
+
+          echo >> "${GITHUB_OUTPUT}" "next=$(semver bump prerel rc.. "${tag}")"
+
 
   release:
     uses: ./.github/workflows/release.workflow.yml
