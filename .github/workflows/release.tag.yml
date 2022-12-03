@@ -1,0 +1,38 @@
+---
+name: Release Belug-Apps (Release Tag)
+on: # yamllint disable-line rule:truthy
+  push:
+    tags:
+      - v[0-9]+.[0-9]+.[0-9]+
+
+jobs:
+  github_release:
+    name: Create a Github release for ${{ github.ref_name }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      discussions: write
+    steps:
+      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
+      - uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844 # tag=v0.1.15
+        with:
+          discussion_category_name: 🔖 ${{ github.ref_name }}
+          generate_release_notes: true
+
+  sync_catalog:
+    name: Sync `belug-apps/truecharts-catalog` with ${{ github.ref_name }} release
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - uses: tibdex/github-app-token@021a2405c7f990db57f5eae5397423dcc554159c # tag=1.7.0
+        id: app_auth
+        with:
+          app_id: ${{ secrets.BOT_ID }}
+          private_key: ${{ secrets.BOT_PKEY }}
+
+      - uses: peter-evans/repository-dispatch@f2696244ec00ed5c659a5cc77f7138ad0302dffb # tag=v2.1.0
+        with:
+          token: ${{ steps.app_auth.outputs.token }}
+          event-type: sync-belugapps
+          client-payload: '{"ref":"${{ github.ref_name }}","train":"stable"}'
