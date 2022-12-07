@@ -14,6 +14,18 @@ build environment="production":
     @just _utils_chart_inject_components
     @just _utils_chart_inject_manifests {{ if environment =~ 'prod.*' { "default" } else { "dev" } }}
 
+# made all changes required to release Belug-Apps
+release version: #build
+    # update version inside Chart.yml and values.yml
+    sed --regexp-extended --in-place 's/^((app)?[vV]ersion).+/\1: {{version}}/g' charts/belug-apps/Chart.yaml
+    sed --regexp-extended --in-place  's/^(    version):.+$/\1: {{version}}/g' charts/belug-apps/values.yaml
+
+    # update CHANGELOG.md
+    git-chglog --next-tag v{{version}} > CHANGELOG.md
+
+    # update README.md (ignore pre-release)
+    {{ if version =~ '^[0-9]+\.[0-9]+\.[0-9]+$' { "sed --regexp-extended --in-place 's/version=[^\"]+/version=v" + version + "/g' README.md" } else { "# ignore on pre-release" } }}
+
 
 ###############################################################################
 # [develop] - manage the lifecycle of the development environment
