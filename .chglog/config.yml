@@ -5,6 +5,8 @@ info:
   title: CHANGELOG
   repository_url: https://github.com/belug-apps/belug-apps
 options:
+  tag_filter_pattern: '^v[0-9]\.[0-9]\.[0-9]$'
+
   commits:
     filters:
       Type:
