@@ -3,22 +3,16 @@
 
 
 
-<a name="v0.5.0-rc.3"></a>
-## [v0.5.0-rc.3] - 2022-12-07
-### Miscellaneous
-- **release:** rebuild Helm dependencies every releases
-
-
-<a name="v0.5.0-rc.2"></a>
-## [v0.5.0-rc.2] - 2022-12-07
-
-<a name="v0.5.0-rc.1"></a>
-## [v0.5.0-rc.1] - 2022-12-07
+<a name="v0.5.0-rc.4"></a>
+## [v0.5.0-rc.4] - 2022-12-07
 ### Fixes
 - **workflows:** use `git tag --sort` to sort tags
 - **chart:** .Chart.Version should not be used with vcluster templating
 
 ### Miscellaneous
+- **CHANGELOG:** ignore pre-release on changelog
+- **chart:** allow to commit dependecies
+- **release:** rebuild Helm dependencies every releases
 - **workflows:** add debug logs on workflows
 - **release:** group all changes required for release inside the .justfile
 - **workflows:** remove useless validation
@@ -36,63 +30,30 @@
 
 <a name="v0.3.0"></a>
 ## [v0.3.0] - 2022-12-07
-
-<a name="v0.2.0-rc.5"></a>
-## [v0.2.0-rc.5] - 2022-12-07
 ### Dependencies
 - **deps:** Update dependency golang to v1.19.4
+- **deps:** Update asdf-vm/actions digest to 707e84f
 
-### Pull Requests
-- Merge pull request [#59](https://github.com/belug-apps/belug-apps/issues/59) from belug-apps/renovate/asdf
-
-
-<a name="v0.2.0-rc.4"></a>
-## [v0.2.0-rc.4] - 2022-12-07
 ### Fixes
 - add OR logical instead of allowing error
-
-
-<a name="v0.2.0-rc.3"></a>
-## [v0.2.0-rc.3] - 2022-12-07
-### Fixes
+- **deps:** Update module github.com/urfave/cli/v2 to v2.23.6
 - **workflows:** allow failure on conditional step
+- fix YAML lint issues on git-chglog config
 
 ### Miscellaneous
 - add README.md
 - move some documentation to docs/
 - **workflows:** manage labels through Github Actions
+- **workflows:** update release message using gitmoji
 - **github:** add issues & PRs templates
-
-### Pull Requests
-- Merge pull request [#57](https://github.com/belug-apps/belug-apps/issues/57) from belug-apps/chore/prepare-repo-for-public-usage
-
-
-<a name="v0.2.0-rc.2"></a>
-## [v0.2.0-rc.2] - 2022-12-04
-### Dependencies
-- **deps:** Update asdf-vm/actions digest to 707e84f
-
-### Fixes
-- **deps:** Update module github.com/urfave/cli/v2 to v2.23.6
-
-### Miscellaneous
+- **changelog:** update git-chglog to manage gitmoji commit message
 - **deps:** use gitmoji with Renovate
 
 ### Pull Requests
+- Merge pull request [#59](https://github.com/belug-apps/belug-apps/issues/59) from belug-apps/renovate/asdf
+- Merge pull request [#57](https://github.com/belug-apps/belug-apps/issues/57) from belug-apps/chore/prepare-repo-for-public-usage
 - Merge pull request [#54](https://github.com/belug-apps/belug-apps/issues/54) from belug-apps/renovate/asdf-vm-actions-digest
 - Merge pull request [#56](https://github.com/belug-apps/belug-apps/issues/56) from belug-apps/renovate/github.com-urfave-cli-v2-2.x
-
-
-<a name="v0.2.0-rc.1"></a>
-## [v0.2.0-rc.1] - 2022-12-04
-### Fixes
-- fix YAML lint issues on git-chglog config
-
-### Miscellaneous
-- **workflows:** update release message using gitmoji
-- **changelog:** update git-chglog to manage gitmoji commit message
-
-### Pull Requests
 - Merge pull request [#53](https://github.com/belug-apps/belug-apps/issues/53) from belug-apps/chore/update-release-message
 
 
@@ -104,28 +65,6 @@
 
 <a name="v0.1.0"></a>
 ## [v0.1.0] - 2022-12-03
-
-<a name="v0.0.1-rc.3"></a>
-## [v0.0.1-rc.3] - 2022-12-03
-### Fixes
-- **workflows:** fix some linter issues
-
-### Miscellaneous
-- **workflows:** cache ASDF
-- **workflows:** manage release on tags
-
-### Pull Requests
-- Merge pull request [#46](https://github.com/belug-apps/belug-apps/issues/46) from belug-apps/chore/add-release-by-tag-workflow
-
-
-<a name="v0.0.1-rc.2"></a>
-## [v0.0.1-rc.2] - 2022-12-03
-### Miscellaneous
-- **workflows:** add a better pre-release management
-
-
-<a name="v0.0.1-rc.1"></a>
-## [v0.0.1-rc.1] - 2022-12-03
 ### Dependencies
 - **deps:** lock file maintenance
 - **deps:** lock file maintenance
@@ -151,6 +90,12 @@
 - **deps:** update helm release vcluster to v0.12.2
 
 ### Fixes
+- **deps:** fix .renovaterc
+- **kubeapps-component:** fix all linter issues
+- **workflows:** fix some linter issues
+- **workflows:** tag all versions
+- **yamllint:** reduce warn on YAML comments
+- **yamllint:** disable line-lenght checks
 - update and fix upgrade issues
 - **workflows:** fix YAML issue
 - **workflows:** pass github token to push step
@@ -161,17 +106,12 @@
 - **api-proxy:** listen on 0.0.0.0 by default
 - **charts:** fix several Helm mistakes
 - **deps:** fix Renovate configuration
-- **deps:** fix .renovaterc
-- **kubeapps-component:** fix all linter issues
-- **workflows:** tag all versions
-- **yamllint:** reduce warn on YAML comments
-- **yamllint:** disable line-lenght checks
 
 ### Improvements
+- **proxy-api:** extract CLI.Action part to another file
 - **api-proxy:** move all truenas API call to dedicated route
 - **kubeapps-component:** use functional component
 - **proxy-api:** move proxy-api to src/ directory
-- **proxy-api:** extract CLI.Action part to another file
 - **kubeapps-component:** adapt component for new Kubeapps UI
 - clean YAML issues
 - **kubeapps-component:** simplify as much as possible all components
@@ -179,14 +119,17 @@
 
 ### Miscellaneous
 - **kubeapps-component:** add linter
+- **workflows:** cache ASDF
+- **workflows:** add a better pre-release management
 - **workflows:** use actions to commit release
+- **workflows:** add ASDF cache to speedup workflows
 - **workflows:** add post-merge release workflow
 - **workflows:** add manual release workflow
 - **workflows:** add main release workflow
 - **workflows:** validate 'values.yml' file
 - **workflows:** always run security workflows on main
 - **workflows:** add worflow to check Dockerfiles
-- **workflows:** add ASDF cache to speedup workflows
+- **workflows:** manage release on tags
 - **workflows:** add worflow to check React component
 - **workflows:** add workflows related to Golang
 - **workflows:** add Helm security check
@@ -223,6 +166,7 @@
 - fix some security issues
 
 ### Pull Requests
+- Merge pull request [#46](https://github.com/belug-apps/belug-apps/issues/46) from belug-apps/chore/add-release-by-tag-workflow
 - Merge pull request [#45](https://github.com/belug-apps/belug-apps/issues/45) from belug-apps/fix/post-merge-workflow
 - Merge pull request [#44](https://github.com/belug-apps/belug-apps/issues/44) from belug-apps/fix/post-merge-workflow
 - Merge pull request [#43](https://github.com/belug-apps/belug-apps/issues/43) from belug-apps/fix/post-merge-workflow
@@ -262,19 +206,9 @@
 <a name="v0.0.0"></a>
 ## v0.0.0 - 2022-10-22
 
-[Unreleased]: https://github.com/belug-apps/belug-apps/compare/v0.5.0-rc.3...HEAD
-[v0.5.0-rc.3]: https://github.com/belug-apps/belug-apps/compare/v0.5.0-rc.2...v0.5.0-rc.3
-[v0.5.0-rc.2]: https://github.com/belug-apps/belug-apps/compare/v0.5.0-rc.1...v0.5.0-rc.2
-[v0.5.0-rc.1]: https://github.com/belug-apps/belug-apps/compare/v0.4.0...v0.5.0-rc.1
+[Unreleased]: https://github.com/belug-apps/belug-apps/compare/v0.5.0-rc.4...HEAD
+[v0.5.0-rc.4]: https://github.com/belug-apps/belug-apps/compare/v0.4.0...v0.5.0-rc.4
 [v0.4.0]: https://github.com/belug-apps/belug-apps/compare/v0.3.0...v0.4.0
-[v0.3.0]: https://github.com/belug-apps/belug-apps/compare/v0.2.0-rc.5...v0.3.0
-[v0.2.0-rc.5]: https://github.com/belug-apps/belug-apps/compare/v0.2.0-rc.4...v0.2.0-rc.5
-[v0.2.0-rc.4]: https://github.com/belug-apps/belug-apps/compare/v0.2.0-rc.3...v0.2.0-rc.4
-[v0.2.0-rc.3]: https://github.com/belug-apps/belug-apps/compare/v0.2.0-rc.2...v0.2.0-rc.3
-[v0.2.0-rc.2]: https://github.com/belug-apps/belug-apps/compare/v0.2.0-rc.1...v0.2.0-rc.2
-[v0.2.0-rc.1]: https://github.com/belug-apps/belug-apps/compare/v0.1.1...v0.2.0-rc.1
+[v0.3.0]: https://github.com/belug-apps/belug-apps/compare/v0.1.1...v0.3.0
 [v0.1.1]: https://github.com/belug-apps/belug-apps/compare/v0.1.0...v0.1.1
-[v0.1.0]: https://github.com/belug-apps/belug-apps/compare/v0.0.1-rc.3...v0.1.0
-[v0.0.1-rc.3]: https://github.com/belug-apps/belug-apps/compare/v0.0.1-rc.2...v0.0.1-rc.3
-[v0.0.1-rc.2]: https://github.com/belug-apps/belug-apps/compare/v0.0.1-rc.1...v0.0.1-rc.2
-[v0.0.1-rc.1]: https://github.com/belug-apps/belug-apps/compare/v0.0.0...v0.0.1-rc.1
+[v0.1.0]: https://github.com/belug-apps/belug-apps/compare/v0.0.0...v0.1.0
