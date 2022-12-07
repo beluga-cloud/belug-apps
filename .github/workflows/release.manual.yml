@@ -42,10 +42,13 @@ jobs:
         id: semver-pre
         run: |
           tag="$(git tag --sort=-v:refname | head --lines=1)"
+          echo "::debug::tags found: $(git tag --sort=-v:refname | xargs)"
+          echo "::debug::latest tag: ${tag}"
 
           # NOTE: if no RC are found, we will create a new one based on the next minor
           #       release
           grep -- '-rc' <<<"${tag}" > /dev/null || tag="$(semver bump minor "${tag}")"
+          echo "::debug::tag after transformation: ${tag}"
 
           echo >> "${GITHUB_OUTPUT}" "next=$(semver bump prerel rc.. "${tag}")"
 
@@ -54,6 +57,8 @@ jobs:
         id: semver
         run: |
           tag="$(git tag --sort=-v:refname | grep --invert-match -- '-rc' | head --lines=1)"
+          echo "::debug::tags found: $(git tag --sort=-v:refname | xargs)"
+          echo "::debug::latest tag: ${tag}"
 
           echo >> "${GITHUB_OUTPUT}" "next=$(semver bump ${{ inputs.type }} "${tag}")"
 
