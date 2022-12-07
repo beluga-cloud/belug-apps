@@ -3,6 +3,12 @@
 
 
 
+<a name="v0.2.0-rc.4"></a>
+## [v0.2.0-rc.4] - 2022-12-07
+### Fixes
+- add OR logical instead of allowing error
+
+
 <a name="v0.2.0-rc.3"></a>
 ## [v0.2.0-rc.3] - 2022-12-07
 ### Fixes
@@ -213,7 +219,8 @@
 <a name="v0.0.0"></a>
 ## v0.0.0 - 2022-10-22
 
-[Unreleased]: https://github.com/belug-apps/belug-apps/compare/v0.2.0-rc.3...HEAD
+[Unreleased]: https://github.com/belug-apps/belug-apps/compare/v0.2.0-rc.4...HEAD
+[v0.2.0-rc.4]: https://github.com/belug-apps/belug-apps/compare/v0.2.0-rc.3...v0.2.0-rc.4
 [v0.2.0-rc.3]: https://github.com/belug-apps/belug-apps/compare/v0.2.0-rc.2...v0.2.0-rc.3
 [v0.2.0-rc.2]: https://github.com/belug-apps/belug-apps/compare/v0.2.0-rc.1...v0.2.0-rc.2
 [v0.2.0-rc.1]: https://github.com/belug-apps/belug-apps/compare/v0.1.1...v0.2.0-rc.1
