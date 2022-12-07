@@ -2,7 +2,7 @@
 ---
 # Default vcluster configuration for TrueNAS
 vcluster:
-  belug-apps:
+  belug_apps:
     version: 0.5.0-rc.4
 
   # Virtual Cluster (k3s) configuration
@@ -232,8 +232,8 @@ vcluster:
           app.kubernetes.io/instance: '{{ .Release.Name }}'
           app.kubernetes.io/managed-by: '{{ .Release.Service }}'
           app.kubernetes.io/name: belugapps
-          app.kubernetes.io/version: '{{ .belug-apps.version }}'
-          helm.sh/chart: belug-apps-{{ .belug-apps.version }}
+          app.kubernetes.io/version: '{{ .Values.belug_apps.version }}'
+          helm.sh/chart: belug-apps-{{ .Values.belug_apps.version }}
         name: kubeapps-system
       ---
       apiVersion: v1
@@ -243,8 +243,8 @@ vcluster:
           app.kubernetes.io/instance: '{{ .Release.Name }}'
           app.kubernetes.io/managed-by: '{{ .Release.Service }}'
           app.kubernetes.io/name: belugapps
-          app.kubernetes.io/version: '{{ .belug-apps.version }}'
-          helm.sh/chart: belug-apps-{{ .belug-apps.version }}
+          app.kubernetes.io/version: '{{ .Values.belug_apps.version }}'
+          helm.sh/chart: belug-apps-{{ .Values.belug_apps.version }}
         name: truenas-creds
         namespace: kubeapps-system
       stringData:
@@ -259,8 +259,8 @@ vcluster:
           app.kubernetes.io/instance: '{{ .Release.Name }}'
           app.kubernetes.io/managed-by: '{{ .Release.Service }}'
           app.kubernetes.io/name: belugapps
-          app.kubernetes.io/version: '{{ .belug-apps.version }}'
-          helm.sh/chart: belug-apps-{{ .belug-apps.version }}
+          app.kubernetes.io/version: '{{ .Values.belug_apps.version }}'
+          helm.sh/chart: belug-apps-{{ .Values.belug_apps.version }}
         name: api-proxy
         namespace: kubeapps-system
       spec:
@@ -271,8 +271,8 @@ vcluster:
           app.kubernetes.io/instance: '{{ .Release.Name }}'
           app.kubernetes.io/managed-by: '{{ .Release.Service }}'
           app.kubernetes.io/name: belugapps
-          app.kubernetes.io/version: '{{ .belug-apps.version }}'
-          helm.sh/chart: belug-apps-{{ .belug-apps.version }}
+          app.kubernetes.io/version: '{{ .Values.belug_apps.version }}'
+          helm.sh/chart: belug-apps-{{ .Values.belug_apps.version }}
       ---
       apiVersion: apps/v1
       kind: Deployment
@@ -282,8 +282,8 @@ vcluster:
           app.kubernetes.io/instance: '{{ .Release.Name }}'
           app.kubernetes.io/managed-by: '{{ .Release.Service }}'
           app.kubernetes.io/name: belugapps
-          app.kubernetes.io/version: '{{ .belug-apps.version }}'
-          helm.sh/chart: belug-apps-{{ .belug-apps.version }}
+          app.kubernetes.io/version: '{{ .Values.belug_apps.version }}'
+          helm.sh/chart: belug-apps-{{ .Values.belug_apps.version }}
         name: belugapps-proxy
         namespace: kubeapps-system
       spec:
@@ -300,8 +300,8 @@ vcluster:
               app.kubernetes.io/instance: '{{ .Release.Name }}'
               app.kubernetes.io/managed-by: '{{ .Release.Service }}'
               app.kubernetes.io/name: belugapps
-              app.kubernetes.io/version: '{{ .belug-apps.version }}'
-              helm.sh/chart: belug-apps-{{ .belug-apps.version }}
+              app.kubernetes.io/version: '{{ .Values.belug_apps.version }}'
+              helm.sh/chart: belug-apps-{{ .Values.belug_apps.version }}
           spec:
             automountServiceAccountToken: false
             containers:
@@ -316,7 +316,7 @@ vcluster:
                   secretKeyRef:
                     key: api-token
                     name: truenas-creds
-              image: gcr.io/belug-apps/api-proxy:{{ .belug-apps.version }}
+              image: gcr.io/belug-apps/api-proxy:{{ .Values.belug_apps.version }}
               livenessProbe:
                 failureThreshold: 6
                 httpGet:
@@ -370,8 +370,8 @@ vcluster:
           app.kubernetes.io/instance: '{{ .Release.Name }}'
           app.kubernetes.io/managed-by: '{{ .Release.Service }}'
           app.kubernetes.io/name: belugapps
-          app.kubernetes.io/version: '{{ .belug-apps.version }}'
-          helm.sh/chart: belug-apps-{{ .belug-apps.version }}
+          app.kubernetes.io/version: '{{ .Values.belug_apps.version }}'
+          helm.sh/chart: belug-apps-{{ .Values.belug_apps.version }}
         name: api-proxy
         namespace: kubeapps-system
       spec:

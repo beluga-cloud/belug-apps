@@ -18,5 +18,5 @@ labels:
   app.kubernetes.io/instance: '{{ .Release.Name }}'
   app.kubernetes.io/managed-by: '{{ .Release.Service }}'
   app.kubernetes.io/name: belugapps
-  app.kubernetes.io/version: '{{ .belug-apps.version }}'
-  helm.sh/chart: 'belug-apps-{{ .belug-apps.version }}'
+  app.kubernetes.io/version: '{{ .Values.belug_apps.version }}'
+  helm.sh/chart: 'belug-apps-{{ .Values.belug_apps.version }}'
