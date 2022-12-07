@@ -20,7 +20,7 @@ jobs:
           labels: |
             org.opencontainers.image.title=Belug-Apps API proxy
             org.opencontainers.image.description=Proxy allowing BelugApps to access APIs such as TrueNAS without authentication and in a secure way
-          images: gcr.io/belug-apps/api-proxy
+          images: ghcr.io/belug-apps/api-proxy
           tags: snyk-${{ github.run_id }}
 
       - uses: docker/bake-action@6c87dcca988e4e074e3ab1f976a70f63ec9673fb # tag=v2.3.0
@@ -35,7 +35,7 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          image: gcr.io/belug-apps/api-proxy:snyk-${{ github.run_id }}
+          image: ghcr.io/belug-apps/api-proxy:snyk-${{ github.run_id }}
           args: --file=./src/api-proxy/Dockerfile
       - uses: github/codeql-action/upload-sarif@62b14cbbadf0c1d9d5ee2534d236a31c9bbd83ac # tag=codeql-bundle-20221024
         with:
