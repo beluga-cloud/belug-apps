@@ -25,6 +25,9 @@
 go.work
 
 ### Helm ###
+# Chart dependencies
+**/charts/*.tgz
+
 ### Node ###
 # Logs
 logs
@@ -196,3 +199,7 @@ sketch
 # .pnp.*
 
 # End of https://www.toptal.com/developers/gitignore/api/go,node,helm,yarn,react
+
+### Custom ###
+# allow Chart dependencies
+!**/charts/*.tgz
