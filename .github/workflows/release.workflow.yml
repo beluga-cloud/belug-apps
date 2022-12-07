@@ -69,25 +69,7 @@ jobs:
             ${{ runner.os }}-asdf-
       - uses: asdf-vm/actions/install@707e84f3ee349548310aeabdad0dd3bfcb9b69fa # v1.1.0
 
-      # NOTE: update all versions inside Chart.yaml
-      - name: Bump `charts/belug-apps/Chart.yaml` to ${{ inputs.version }}
-        run: |
-          sed --regexp-extended --in-place 's/^((app)?[vV]ersion).+/\1: ${{ inputs.version }}/g' charts/belug-apps/Chart.yaml
-
-      # NOTE: rebuild components & manifests and inject them to `charts/belug-apps/values.yaml`
-      - name: Release components & manifests
-        run: just build
-
-      # NOTE: generate changelog
-      - name: Update `CHANGELOG.md` with the release v${{ inputs.version }}
-        run: git-chglog --next-tag v${{ inputs.version }} > CHANGELOG.md
-
-      # NOTE: update README
-      - name: Update `README.md` with the release v${{ inputs.version }} (only release)
-        run: |
-          [[ "${{ inputs.version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] \
-            || exit 0 \
-            && sed -E 's/version=[^"]+/version=v${{ inputs.version }}/g' README.md
+      - run: just release ${{ inputs.version }}
 
       # NOTE: commit all changes
       - uses: EndBug/add-and-commit@61a88be553afe4206585b31aa72387c64295d08b # tag=v9.1.1
