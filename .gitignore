@@ -25,9 +25,6 @@
 go.work
 
 ### Helm ###
-# Chart dependencies
-**/charts/*.tgz
-
 ### Node ###
 # Logs
 logs

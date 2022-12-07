@@ -20,6 +20,9 @@ release version: #build
     sed --regexp-extended --in-place 's/^((app)?[vV]ersion).+/\1: {{version}}/g' charts/belug-apps/Chart.yaml
     sed --regexp-extended --in-place  's/^(    version):.+$/\1: {{version}}/g' charts/belug-apps/values.yaml
 
+    # update chart dependencies
+    cd 'charts/belug-apps' && helm dependencies update
+
     # update CHANGELOG.md
     git-chglog --next-tag v{{version}} > CHANGELOG.md
 
