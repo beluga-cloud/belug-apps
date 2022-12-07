@@ -3,8 +3,14 @@
 
 
 
+<a name="v0.5.0-rc.3"></a>
+## [v0.5.0-rc.3] - 2022-12-07
+### Miscellaneous
+- **release:** rebuild Helm dependencies every releases
+
+
 <a name="v0.5.0-rc.2"></a>
-## [v0.5.0-rc.2] - 0001-01-01
+## [v0.5.0-rc.2] - 2022-12-07
 
 <a name="v0.5.0-rc.1"></a>
 ## [v0.5.0-rc.1] - 2022-12-07
@@ -256,7 +262,8 @@
 <a name="v0.0.0"></a>
 ## v0.0.0 - 2022-10-22
 
-[Unreleased]: https://github.com/belug-apps/belug-apps/compare/v0.5.0-rc.2...HEAD
+[Unreleased]: https://github.com/belug-apps/belug-apps/compare/v0.5.0-rc.3...HEAD
+[v0.5.0-rc.3]: https://github.com/belug-apps/belug-apps/compare/v0.5.0-rc.2...v0.5.0-rc.3
 [v0.5.0-rc.2]: https://github.com/belug-apps/belug-apps/compare/v0.5.0-rc.1...v0.5.0-rc.2
 [v0.5.0-rc.1]: https://github.com/belug-apps/belug-apps/compare/v0.4.0...v0.5.0-rc.1
 [v0.4.0]: https://github.com/belug-apps/belug-apps/compare/v0.3.0...v0.4.0
