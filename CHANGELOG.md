@@ -3,6 +3,9 @@
 
 
 
+<a name="v0.5.0-rc.2"></a>
+## [v0.5.0-rc.2] - 0001-01-01
+
 <a name="v0.5.0-rc.1"></a>
 ## [v0.5.0-rc.1] - 2022-12-07
 ### Fixes
@@ -253,7 +256,8 @@
 <a name="v0.0.0"></a>
 ## v0.0.0 - 2022-10-22
 
-[Unreleased]: https://github.com/belug-apps/belug-apps/compare/v0.5.0-rc.1...HEAD
+[Unreleased]: https://github.com/belug-apps/belug-apps/compare/v0.5.0-rc.2...HEAD
+[v0.5.0-rc.2]: https://github.com/belug-apps/belug-apps/compare/v0.5.0-rc.1...v0.5.0-rc.2
 [v0.5.0-rc.1]: https://github.com/belug-apps/belug-apps/compare/v0.4.0...v0.5.0-rc.1
 [v0.4.0]: https://github.com/belug-apps/belug-apps/compare/v0.3.0...v0.4.0
 [v0.3.0]: https://github.com/belug-apps/belug-apps/compare/v0.2.0-rc.5...v0.3.0
