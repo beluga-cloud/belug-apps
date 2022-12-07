@@ -84,9 +84,10 @@ jobs:
 
       # NOTE: update README
       - name: Update `README.md` with the release v${{ inputs.version }} (only release)
-        continue-on-error: true
         run: |
-          [[ "${{ inputs.version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] && sed -E 's/version=[^"]+/version=v${{ inputs.version }}/g' README.md
+          [[ "${{ inputs.version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] \
+            || exit 0 \
+            && sed -E 's/version=[^"]+/version=v${{ inputs.version }}/g' README.md
 
       # NOTE: commit all changes
       - uses: EndBug/add-and-commit@61a88be553afe4206585b31aa72387c64295d08b # tag=v9.1.1
