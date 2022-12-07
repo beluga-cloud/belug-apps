@@ -3,9 +3,10 @@
 
 
 
-<a name="v0.5.0-rc.5"></a>
-## [v0.5.0-rc.5] - 2022-12-07
+<a name="v0.5.0-rc.6"></a>
+## [v0.5.0-rc.6] - 2022-12-07
 ### Fixes
+- **charts:** use ghcr.io instead of gcr.io
 - **charts:** use _ instead of - inside YAML keys
 - **workflows:** use `git tag --sort` to sort tags
 - **chart:** .Chart.Version should not be used with vcluster templating
@@ -207,8 +208,8 @@
 <a name="v0.0.0"></a>
 ## v0.0.0 - 2022-10-22
 
-[Unreleased]: https://github.com/belug-apps/belug-apps/compare/v0.5.0-rc.5...HEAD
-[v0.5.0-rc.5]: https://github.com/belug-apps/belug-apps/compare/v0.4.0...v0.5.0-rc.5
+[Unreleased]: https://github.com/belug-apps/belug-apps/compare/v0.5.0-rc.6...HEAD
+[v0.5.0-rc.6]: https://github.com/belug-apps/belug-apps/compare/v0.4.0...v0.5.0-rc.6
 [v0.4.0]: https://github.com/belug-apps/belug-apps/compare/v0.3.0...v0.4.0
 [v0.3.0]: https://github.com/belug-apps/belug-apps/compare/v0.1.1...v0.3.0
 [v0.1.1]: https://github.com/belug-apps/belug-apps/compare/v0.1.0...v0.1.1
