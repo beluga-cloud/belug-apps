@@ -30,7 +30,7 @@ spec:
                 secretKeyRef:
                   key: api-token
                   name: truenas-creds
-          image: gcr.io/belug-apps/api-proxy:{{ .Chart.Version }}
+          image: gcr.io/belug-apps/api-proxy:{{ .belug-apps.version }}
           livenessProbe:
             failureThreshold: 6
             httpGet:

@@ -69,10 +69,11 @@ jobs:
             ${{ runner.os }}-asdf-
       - uses: asdf-vm/actions/install@707e84f3ee349548310aeabdad0dd3bfcb9b69fa # v1.1.0
 
-      # NOTE: update all versions inside Chart.yaml
+      # NOTE: update all versions inside the Helm chart
       - name: Bump `charts/belug-apps/Chart.yaml` to ${{ inputs.version }}
         run: |
           sed --regexp-extended --in-place 's/^((app)?[vV]ersion).+/\1: ${{ inputs.version }}/g' charts/belug-apps/Chart.yaml
+          sed --regexp-extended --in-place  's/^(    version):.+$/\1: ${{ inputs.version }}/g' charts/belug-apps/values.yaml
 
       # NOTE: rebuild components & manifests and inject them to `charts/belug-apps/values.yaml`
       - name: Release components & manifests
