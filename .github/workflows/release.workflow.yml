@@ -82,6 +82,11 @@ jobs:
       - name: Update `CHANGELOG.md` with the release v${{ inputs.version }}
         run: git-chglog --next-tag v${{ inputs.version }} > CHANGELOG.md
 
+      # NOTE: update README
+      - name: Update `README.md` with the release v${{ inputs.version }} (only release)
+        run: |
+          [[ "${{ inputs.version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] && sed -E 's/version=[^"]+/version=v${{ inputs.version }}/g' README.md
+
       # NOTE: commit all changes
       - uses: EndBug/add-and-commit@61a88be553afe4206585b31aa72387c64295d08b # tag=v9.1.1
         with:
