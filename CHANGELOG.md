@@ -3,8 +3,20 @@
 
 
 
+<a name="v0.4.0-rc.2"></a>
+## [v0.4.0-rc.2] - 2022-12-07
+### Fixes
+- **chart:** .Chart.Version should not be used with vcluster templating
+
+### Miscellaneous
+- **release:** group all changes required for release inside the .justfile
+
+### Pull Requests
+- Merge pull request [#66](https://github.com/belug-apps/belug-apps/issues/66) from belug-apps/fix/api-proxy-helm-version
+
+
 <a name="v0.4.0"></a>
-## [v0.4.0] - 0001-01-01
+## [v0.4.0] - 2022-12-07
 
 <a name="v0.4.0-rc.1"></a>
 ## [v0.4.0-rc.1] - 2022-12-07
@@ -241,7 +253,8 @@
 <a name="v0.0.0"></a>
 ## v0.0.0 - 2022-10-22
 
-[Unreleased]: https://github.com/belug-apps/belug-apps/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/belug-apps/belug-apps/compare/v0.4.0-rc.2...HEAD
+[v0.4.0-rc.2]: https://github.com/belug-apps/belug-apps/compare/v0.4.0...v0.4.0-rc.2
 [v0.4.0]: https://github.com/belug-apps/belug-apps/compare/v0.4.0-rc.1...v0.4.0
 [v0.4.0-rc.1]: https://github.com/belug-apps/belug-apps/compare/v0.3.0...v0.4.0-rc.1
 [v0.3.0]: https://github.com/belug-apps/belug-apps/compare/v0.2.0-rc.5...v0.3.0
