@@ -1,0 +1,26 @@
+---
+name: Manage `stale` labels
+on: # yamllint disable-line rule:truthy
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * 0,4"
+
+jobs:
+  stale-bot:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/stale@5ebf00ea0e4c1561e9b43a292ed34424fb1d4578 # tag=v6.0.1
+        with:
+          days-before-stale: 30
+          days-before-close: 7
+          stale-issue-label: 'state: stale'
+          close-issue-label: 'state: rotten'
+          stale-pr-label: 'state: stale'
+          close-pr-label: 'state: rotten'
+          exempt-issue-labels: |
+            no-stale
+          exempt-pr-labels: |
+            no-stale

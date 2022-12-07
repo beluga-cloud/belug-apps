@@ -8,6 +8,7 @@
     ":enableVulnerabilityAlerts",
     ":gitSignOff",
     ":ignoreUnstable",
+    ":labels(type: dependencies)",
     ":maintainLockFilesMonthly",
     ":renovatePrefix",
     ":semanticCommitScope(deps)",
