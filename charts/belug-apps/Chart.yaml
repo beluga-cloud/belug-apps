@@ -4,8 +4,8 @@ name: belug-apps
 description: |
   Belug-apps is a simple chart that allows every TrueNAS users to install and
   manage natively Kubernetes apps on TrueNAS Scale.
-version: 0.4.0-rc.1
-appVersion: 0.4.0-rc.1
+version: 0.4.0
+appVersion: 0.4.0
 home: https://github.com/belug-apps
 icon: https://github.com/belug-apps/belug-apps/raw/main/assets/logo_400px.png
 keywords:  # kubeapps + vcluster + truenas keywords
