@@ -37,6 +37,7 @@ jobs:
 
       - uses: peter-evans/repository-dispatch@f2696244ec00ed5c659a5cc77f7138ad0302dffb # tag=v2.1.0
         with:
-          token: ${{ steps.app_auth.outputs.token }}
-          event-type: sync-belugapps
           client-payload: '{"ref":"${{ github.ref_name }}","train":"stable"}'
+          event-type: sync-belugapps
+          repository: belug-apps/truecharts-catalog
+          token: ${{ steps.app_auth.outputs.token }}
