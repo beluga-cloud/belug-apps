@@ -3,6 +3,15 @@
 
 
 
+<a name="v0.2.0-rc.5"></a>
+## [v0.2.0-rc.5] - 2022-12-07
+### Dependencies
+- **deps:** Update dependency golang to v1.19.4
+
+### Pull Requests
+- Merge pull request [#59](https://github.com/belug-apps/belug-apps/issues/59) from belug-apps/renovate/asdf
+
+
 <a name="v0.2.0-rc.4"></a>
 ## [v0.2.0-rc.4] - 2022-12-07
 ### Fixes
@@ -219,7 +228,8 @@
 <a name="v0.0.0"></a>
 ## v0.0.0 - 2022-10-22
 
-[Unreleased]: https://github.com/belug-apps/belug-apps/compare/v0.2.0-rc.4...HEAD
+[Unreleased]: https://github.com/belug-apps/belug-apps/compare/v0.2.0-rc.5...HEAD
+[v0.2.0-rc.5]: https://github.com/belug-apps/belug-apps/compare/v0.2.0-rc.4...v0.2.0-rc.5
 [v0.2.0-rc.4]: https://github.com/belug-apps/belug-apps/compare/v0.2.0-rc.3...v0.2.0-rc.4
 [v0.2.0-rc.3]: https://github.com/belug-apps/belug-apps/compare/v0.2.0-rc.2...v0.2.0-rc.3
 [v0.2.0-rc.2]: https://github.com/belug-apps/belug-apps/compare/v0.2.0-rc.1...v0.2.0-rc.2
