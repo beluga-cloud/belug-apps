@@ -41,7 +41,7 @@ jobs:
         if: inputs.type == 'pre-release'
         id: semver-pre
         run: |
-          tag="$(git tag --list | sort --version-sort --reverse | head --lines=1)"
+          tag="$(git tag --sort=-v:refname | head --lines=1)"
 
           # NOTE: if no RC are found, we will create a new one based on the next minor
           #       release
@@ -53,7 +53,7 @@ jobs:
         if: inputs.type != 'pre-release'
         id: semver
         run: |
-          tag="$(git tag --list | sort --version-sort --reverse | grep --invert-match -- '-rc' | head --lines=1)"
+          tag="$(git tag --sort=-v:refname | grep --invert-match -- '-rc' | head --lines=1)"
 
           echo >> "${GITHUB_OUTPUT}" "next=$(semver bump ${{ inputs.type }} "${tag}")"
 

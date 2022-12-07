@@ -31,7 +31,7 @@ jobs:
       - name: Bump version to the next pre-release
         id: semver
         run: |
-          tag="$(git tag --list | sort --version-sort --reverse | head --lines=1)"
+          tag="$(git tag --sort=-v:refname | head --lines=1)"
 
           # NOTE: if no RC are found, we will create a new one based on the next minor
           #       release
