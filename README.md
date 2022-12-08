@@ -26,8 +26,8 @@
   <br/>
   ![TrueNAS Scale compatible version](https://img.shields.io/badge/TrueNAS_compatibility-SCALE%2022.02-success?logo=truenas&logoColor=white&logoWidth=20)
   [
-    ![Pending dependencies](https://img.shields.io/github/issues/belug-apps/belug-apps/dependencies?label=dependencies&logo=renovatebot&logoWidth=20&style=flat)
-  ](https://github.com/belug-apps/belug-apps/pulls?q=is%3Aopen+is%3Apr+label%3Adependencies)
+    ![Pending dependencies](https://img.shields.io/github/issues-pr/belug-apps/belug-apps/type:%20dependencies?label=dependencies&logo=renovatebot&logoWidth=20&style=flat)
+  ](https://github.com/belug-apps/belug-apps/pulls?q=is%3Apr+is%3Aopen+label%3A%22type%3A+dependencies%22)
   <br/>
 
   <a href="#about">About</a> ·
