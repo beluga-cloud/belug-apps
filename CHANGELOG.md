@@ -3,6 +3,16 @@
 
 
 
+<a name="v0.5.1"></a>
+## [v0.5.1] - 2022-12-08
+### Fixes
+- **chart:** fix some ingress issues
+- **chart:** remove pod labels using non consistent values
+
+### New Features
+- **chart:** redeploy API proxy when TrueNAS credentials change
+
+
 <a name="v0.5.0"></a>
 ## [v0.5.0] - 2022-12-08
 ### Dependencies
@@ -217,7 +227,8 @@
 <a name="v0.0.0"></a>
 ## v0.0.0 - 2022-10-22
 
-[Unreleased]: https://github.com/belug-apps/belug-apps/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/belug-apps/belug-apps/compare/v0.5.1...HEAD
+[v0.5.1]: https://github.com/belug-apps/belug-apps/compare/v0.5.0...v0.5.1
 [v0.5.0]: https://github.com/belug-apps/belug-apps/compare/v0.4.0...v0.5.0
 [v0.4.0]: https://github.com/belug-apps/belug-apps/compare/v0.3.0...v0.4.0
 [v0.3.0]: https://github.com/belug-apps/belug-apps/compare/v0.1.1...v0.3.0

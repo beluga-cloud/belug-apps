@@ -8,7 +8,7 @@
 <h4 align="center">Belug-Apps - TrueCharts alternative for TrueNAS SCALE</h4>
 
 <div align="center">
-  <a href="https://github.com/belug-apps/belug-apps/issues/new?https://github.com/xunleii/belug-apps-test/issues/new?assignees=&labels=type%3A+bug%2Cstate%3A+needs+triage&template=01_BUG_REPORT.yml&title=%F0%9F%90%9B+&version=v0.5.0">Report a Bug</a> ·
+  <a href="https://github.com/belug-apps/belug-apps/issues/new?https://github.com/xunleii/belug-apps-test/issues/new?assignees=&labels=type%3A+bug%2Cstate%3A+needs+triage&template=01_BUG_REPORT.yml&title=%F0%9F%90%9B+&version=v0.5.1">Report a Bug</a> ·
   <a href="https://github.com/belug-apps/belug-apps-test/issues/new?assignees=&labels=type%3A+enhancement&template=02_FEATURE_REQUEST.yml&title=%E2%9C%A8+">Request a Feature</a> ·
   <a href="https://github.com/belug-apps/belug-apps/discussions">Ask a Question</a>
   <br/>
