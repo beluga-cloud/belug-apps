@@ -16,6 +16,10 @@ on: # yamllint disable-line rule:truthy
         default: false
         type: boolean
 
+concurrency:
+  cancel-in-progress: true
+  group: release-workflow
+
 jobs:
   build_image:
     name: Release `ghcr.io/belug-apps/api-proxy` (v${{ inputs.version }})
