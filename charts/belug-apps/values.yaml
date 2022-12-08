@@ -224,6 +224,44 @@ vcluster:
         namespace: default
       type: kubernetes.io/service-account-token
       ---
+
+      # NOTE: because ingress contains go template, it cannot be defined 
+      #       inside /manifests directory
+      apiVersion: networking.k8s.io/v1
+      kind: Ingress
+      metadata:
+        annotations:
+          traefik.ingress.kubernetes.io/router.entrypoints: websecure
+        labels:
+          app.kubernetes.io/component: api-proxy
+          app.kubernetes.io/instance: '{{ .Release.Name }}'
+          app.kubernetes.io/managed-by: '{{ .Release.Service }}'
+          app.kubernetes.io/name: belugapps
+          app.kubernetes.io/version: '{{ .Values.belug_apps.version }}'
+          helm.sh/chart: belug-apps-{{ .Values.belug_apps.version }}
+        name: api-proxy
+        namespace: kubeapps-system
+      spec:
+        rules:
+          - host: '{{ .Values.ix_portal.main.host }}'
+            http:
+              paths:
+                - backend:
+                    service:
+                      name: api-proxy
+                      port:
+                        name: http
+                  path: /truenas
+                  pathType: ImplementationSpecific
+
+        {{ with .Values.ix_portal.tls }}
+        tls:
+        {{ range . }}
+        - hosts: {{ .hosts | toJson }}
+          secretName: '{{ printf "%v-tls-ixcert-%v" $.Release.Name .scaleCert }}'
+        {{ end }}
+        {{ end }}
+      ---
       # [inject] kubernetes manifests
       apiVersion: v1
       kind: Namespace
@@ -359,37 +397,6 @@ vcluster:
             securityContext:
               seccompProfile:
                 type: RuntimeDefault
-      ---
-      apiVersion: networking.k8s.io/v1
-      kind: Ingress
-      metadata:
-        annotations:
-          traefik.ingress.kubernetes.io/router.entrypoints: websecure
-        labels:
-          app.kubernetes.io/component: api-proxy
-          app.kubernetes.io/instance: '{{ .Release.Name }}'
-          app.kubernetes.io/managed-by: '{{ .Release.Service }}'
-          app.kubernetes.io/name: belugapps
-          app.kubernetes.io/version: '{{ .Values.belug_apps.version }}'
-          helm.sh/chart: belug-apps-{{ .Values.belug_apps.version }}
-        name: api-proxy
-        namespace: kubeapps-system
-      spec:
-        rules:
-        - host: '{{ .Values.ix_portal.main.host }}'
-          http:
-            paths:
-            - backend:
-                service:
-                  name: api-proxy
-                  port:
-                    name: http
-              path: /truenas
-              pathType: ImplementationSpecific
-        tls:
-        - hosts:
-          - '{{ .Values.ix_portal.main.host }}'
-          secretName: '{{ printf "%v-tls-ixcert-%v" $.Release.Name .scaleCert }}'
       
       # [end inject] kubernetes manifests
 
