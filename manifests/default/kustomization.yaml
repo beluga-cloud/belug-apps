@@ -7,3 +7,4 @@ resources:
   - truenas-creds.secret.yaml
 transformers:
   - common.labels.yaml
+  - common.pod-labels.yaml

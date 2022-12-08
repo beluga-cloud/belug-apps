@@ -2,13 +2,17 @@
 apiVersion: builtin
 kind: LabelTransformer
 metadata:
-  name: common-labels
+  name: common-pod-labels
 fieldSpecs:
   - create: true
-    path: metadata/labels
+    group: apps
+    path: spec/template/metadata/labels
+    version: v1
+  - create: true
+    kind: Service
+    path: spec/selector
+    version: v1
 labels:
   app.kubernetes.io/instance: '{{ .Release.Name }}'
   app.kubernetes.io/managed-by: '{{ .Release.Service }}'
   app.kubernetes.io/name: belugapps
-  app.kubernetes.io/version: '{{ .Values.belug_apps.version }}'
-  helm.sh/chart: 'belug-apps-{{ .Values.belug_apps.version }}'
