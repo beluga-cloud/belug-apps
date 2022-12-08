@@ -3,7 +3,7 @@
 # Default vcluster configuration for TrueNAS
 vcluster:
   belug_apps:
-    version: 0.5.1
+    version: 0.5.2
 
   # Virtual Cluster (k3s) configuration
   vcluster:

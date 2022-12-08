@@ -3,6 +3,12 @@
 
 
 
+<a name="v0.5.2"></a>
+## [v0.5.2] - 2022-12-08
+### Fixes
+- **chart:** quote helm template
+
+
 <a name="v0.5.1"></a>
 ## [v0.5.1] - 2022-12-08
 ### Fixes
@@ -227,7 +233,8 @@
 <a name="v0.0.0"></a>
 ## v0.0.0 - 2022-10-22
 
-[Unreleased]: https://github.com/belug-apps/belug-apps/compare/v0.5.1...HEAD
+[Unreleased]: https://github.com/belug-apps/belug-apps/compare/v0.5.2...HEAD
+[v0.5.2]: https://github.com/belug-apps/belug-apps/compare/v0.5.1...v0.5.2
 [v0.5.1]: https://github.com/belug-apps/belug-apps/compare/v0.5.0...v0.5.1
 [v0.5.0]: https://github.com/belug-apps/belug-apps/compare/v0.4.0...v0.5.0
 [v0.4.0]: https://github.com/belug-apps/belug-apps/compare/v0.3.0...v0.4.0
