@@ -3,7 +3,7 @@
 # Default vcluster configuration for TrueNAS
 vcluster:
   belug_apps:
-    version: 0.5.3
+    version: 0.5.4
 
   # Virtual Cluster (k3s) configuration
   vcluster:
@@ -333,7 +333,7 @@ vcluster:
         template:
           metadata:
             annotations:
-              checksum/credentials: '{{ (.Values.ix_truenas.host .Values.ix_truenas.token)
+              checksum/credentials: '{{ (print .Values.ix_truenas.host .Values.ix_truenas.token)
                 | sha256sum }}'
             labels:
               app.kubernetes.io/component: api-proxy
