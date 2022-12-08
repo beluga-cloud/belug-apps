@@ -9,12 +9,14 @@ default:
     @just --list
 
 # build Belug-Apps helm charts with external manifests and Kubeapps component
+[no-exit-message]
 build environment="production":
     cd 'src/kubeapps-components' && (yarn; yarn build --mode={{environment}})
     @just _utils_chart_inject_components
     @just _utils_chart_inject_manifests {{ if environment =~ 'prod.*' { "default" } else { "dev" } }}
 
 # made all changes required to release Belug-Apps
+[no-exit-message]
 release version: #build
     # update version inside Chart.yml and values.yml
     sed --regexp-extended --in-place 's/^((app)?[vV]ersion).+/\1: {{version}}/g' charts/belug-apps/Chart.yaml
@@ -163,13 +165,18 @@ _utils_prepare_image image path context: && (_kind_import_image context image)
 
 # [private] inject Kubeapps component to local Belug-Apps chart
 [no-exit-message]
-_utils_chart_inject_components: (_assert_utils_file_exists "src/kubeapps-components/dist/main.js")
+@_utils_chart_inject_components: (_assert_utils_file_exists "src/kubeapps-components/dist/main.js")
+    just _log "inject Kubeapps component inside Belug-Apps chart values"
     (echo 'customComponents: |'; sed 's/^/  /' 'src/kubeapps-components/dist/main.js') \
     | just _utils_inject 'kubeapps component' /dev/stdin charts/belug-apps/values.yaml 6
 
 # [private] inject Kubernetes manifests to local Belug-Apps chart
 [no-exit-message]
 _utils_chart_inject_manifests flavor="default": (_assert_utils_dir_exists "manifests/" + flavor)
+    #!/bin/env bash
+    set -euo pipefail
+
+    just _log "inject manifests inside Belug-Apps chart values"
     kustomize build 'manifests/{{flavor}}' | just _utils_inject 'kubernetes manifests' /dev/stdin charts/belug-apps/values.yaml 3
 
 # [private] inject the content of the input file into the output file, between delimiters
