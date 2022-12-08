@@ -3,16 +3,22 @@
 
 
 
-<a name="v0.5.0-rc.6"></a>
-## [v0.5.0-rc.6] - 2022-12-07
+<a name="v0.5.0-rc.7"></a>
+## [v0.5.0-rc.7] - 2022-12-08
+### Dependencies
+- **deps:** Update peter-evans/repository-dispatch action to v2.1.1
+
 ### Fixes
+- **chart:** .Chart.Version should not be used with vcluster templating
+- **just:** handle error during building manifest
+- **chart:** loog over TLS configuration to generate ingress
 - **charts:** use ghcr.io instead of gcr.io
 - **charts:** use _ instead of - inside YAML keys
 - **workflows:** use `git tag --sort` to sort tags
-- **chart:** .Chart.Version should not be used with vcluster templating
 
 ### Miscellaneous
 - **CHANGELOG:** ignore pre-release on changelog
+- **README:** update dependencies badge
 - **chart:** allow to commit dependecies
 - **release:** rebuild Helm dependencies every releases
 - **workflows:** add debug logs on workflows
@@ -20,6 +26,8 @@
 - **workflows:** remove useless validation
 
 ### Pull Requests
+- Merge pull request [#67](https://github.com/belug-apps/belug-apps/issues/67) from belug-apps/renovate/github-actions
+- Merge pull request [#68](https://github.com/belug-apps/belug-apps/issues/68) from belug-apps/fixes
 - Merge pull request [#66](https://github.com/belug-apps/belug-apps/issues/66) from belug-apps/fix/api-proxy-helm-version
 
 
@@ -208,8 +216,8 @@
 <a name="v0.0.0"></a>
 ## v0.0.0 - 2022-10-22
 
-[Unreleased]: https://github.com/belug-apps/belug-apps/compare/v0.5.0-rc.6...HEAD
-[v0.5.0-rc.6]: https://github.com/belug-apps/belug-apps/compare/v0.4.0...v0.5.0-rc.6
+[Unreleased]: https://github.com/belug-apps/belug-apps/compare/v0.5.0-rc.7...HEAD
+[v0.5.0-rc.7]: https://github.com/belug-apps/belug-apps/compare/v0.4.0...v0.5.0-rc.7
 [v0.4.0]: https://github.com/belug-apps/belug-apps/compare/v0.3.0...v0.4.0
 [v0.3.0]: https://github.com/belug-apps/belug-apps/compare/v0.1.1...v0.3.0
 [v0.1.1]: https://github.com/belug-apps/belug-apps/compare/v0.1.0...v0.1.1
