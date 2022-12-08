@@ -17,7 +17,7 @@ build environment="production":
 
 # made all changes required to release Belug-Apps
 [no-exit-message]
-release version: #build
+release version: build
     # update version inside Chart.yml and values.yml
     sed --regexp-extended --in-place 's/^((app)?[vV]ersion).+/\1: {{version}}/g' charts/belug-apps/Chart.yaml
     sed --regexp-extended --in-place  's/^(    version):.+$/\1: {{version}}/g' charts/belug-apps/values.yaml
