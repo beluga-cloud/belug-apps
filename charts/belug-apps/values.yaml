@@ -251,7 +251,7 @@ vcluster:
                       name: api-proxy
                       port:
                         name: http
-                  path: /truenas
+                  path: /truenas/
                   pathType: ImplementationSpecific
 
         {{ with .Values.ix_portal.tls }}
