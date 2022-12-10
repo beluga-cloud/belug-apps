@@ -7,7 +7,7 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/hashicorp/golang-lru/v2 v2.0.1
 	github.com/stretchr/testify v1.8.1
-	github.com/urfave/cli/v2 v2.23.6
+	github.com/urfave/cli/v2 v2.23.7
 	go.uber.org/zap v1.24.0
 )
 
