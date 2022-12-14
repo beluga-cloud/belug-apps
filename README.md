@@ -67,7 +67,7 @@ Kubernetes cluster *(which makes migrations more easier)*.
 
 Although Belug-Apps was designed to be as agnostic as possible, it still requires some things:
 
-- An input controller must be installed. I recommend using Traefik because I haven't tested any
+- An ingress controller must be installed. I recommend using Traefik because I haven't tested any
 others and the installation form was designed for it *(like the other TrueCharts applications)*.
 - A dedicated DNS entry to access the dashboard.
 - A valid SSL certificate. *It can probably work without one, but I recommend it for security reasons.*
