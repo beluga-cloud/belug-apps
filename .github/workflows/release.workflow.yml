@@ -25,7 +25,7 @@ jobs:
     name: Release `ghcr.io/belug-apps/api-proxy` (v${{ inputs.version }})
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
+      - uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # v3.2.0
       - uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a # tag=v2.1.0
         with:
           registry: ghcr.io
@@ -58,7 +58,7 @@ jobs:
           app_id: ${{ secrets.BOT_ID }}
           private_key: ${{ secrets.BOT_PKEY }}
 
-      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
+      - uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # v3.2.0
         with:
           fetch-depth: 0
           ref: ${{ inputs.ref }}
