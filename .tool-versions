@@ -1,6 +1,6 @@
 git-chglog 0.15.1
 golang 1.19.4
-helm 3.10.2
+helm 3.10.3
 jq 1.6
 just 1.9.0
 kind 0.17.0
