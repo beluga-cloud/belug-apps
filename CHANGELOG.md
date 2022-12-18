@@ -3,17 +3,24 @@
 
 
 
-<a name="v0.6.0-rc.1"></a>
-## [v0.6.0-rc.1] - 2022-12-14
+<a name="v0.6.0-rc.2"></a>
+## [v0.6.0-rc.2] - 2022-12-18
 ### Dependencies
 - **deps:** Update dependency helm to v3.10.3
 - **deps:** Update github-actions
 
 ### Fixes
-- **README:** ingress controller and not input controller
+- fix some CI lint issues
 - **deps:** Update module github.com/urfave/cli/v2 to v2.23.7
+- **README:** ingress controller and not input controller
+
+### Miscellaneous
+- remove all assets & config managed by .github repo
+- **dependencies:** update renovate conf. to use the shared one
+- **milestones:** add milestones sync workflow
 
 ### Pull Requests
+- Merge pull request [#94](https://github.com/belug-apps/belug-apps/issues/94) from belug-apps/chore/clean-repository
 - Merge pull request [#88](https://github.com/belug-apps/belug-apps/issues/88) from belug-apps/renovate/github.com-urfave-cli-v2-2.x
 - Merge pull request [#89](https://github.com/belug-apps/belug-apps/issues/89) from belug-apps/renovate/github-actions
 - Merge pull request [#90](https://github.com/belug-apps/belug-apps/issues/90) from belug-apps/renovate/asdf
@@ -261,8 +268,8 @@
 <a name="v0.0.0"></a>
 ## v0.0.0 - 2022-10-22
 
-[Unreleased]: https://github.com/belug-apps/belug-apps/compare/v0.6.0-rc.1...HEAD
-[v0.6.0-rc.1]: https://github.com/belug-apps/belug-apps/compare/v0.5.4...v0.6.0-rc.1
+[Unreleased]: https://github.com/belug-apps/belug-apps/compare/v0.6.0-rc.2...HEAD
+[v0.6.0-rc.2]: https://github.com/belug-apps/belug-apps/compare/v0.5.4...v0.6.0-rc.2
 [v0.5.4]: https://github.com/belug-apps/belug-apps/compare/v0.5.3...v0.5.4
 [v0.5.3]: https://github.com/belug-apps/belug-apps/compare/v0.5.2...v0.5.3
 [v0.5.2]: https://github.com/belug-apps/belug-apps/compare/v0.5.1...v0.5.2
