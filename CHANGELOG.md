@@ -3,9 +3,11 @@
 
 
 
-<a name="v0.6.0-rc.2"></a>
-## [v0.6.0-rc.2] - 2022-12-18
+<a name="v0.6.0-rc.3"></a>
+## [v0.6.0-rc.3] - 2022-12-18
 ### Dependencies
+- **deps:** Update actions/checkout action to v3.2.0
+- **deps:** Update github/codeql-action digest to 0a3f985
 - **deps:** Update dependency helm to v3.10.3
 - **deps:** Update github-actions
 
@@ -20,6 +22,8 @@
 - **milestones:** add milestones sync workflow
 
 ### Pull Requests
+- Merge pull request [#98](https://github.com/belug-apps/belug-apps/issues/98) from belug-apps/renovate/github-actions
+- Merge pull request [#95](https://github.com/belug-apps/belug-apps/issues/95) from belug-apps/renovate/github-codeql-action-digest
 - Merge pull request [#94](https://github.com/belug-apps/belug-apps/issues/94) from belug-apps/chore/clean-repository
 - Merge pull request [#88](https://github.com/belug-apps/belug-apps/issues/88) from belug-apps/renovate/github.com-urfave-cli-v2-2.x
 - Merge pull request [#89](https://github.com/belug-apps/belug-apps/issues/89) from belug-apps/renovate/github-actions
@@ -268,8 +272,8 @@
 <a name="v0.0.0"></a>
 ## v0.0.0 - 2022-10-22
 
-[Unreleased]: https://github.com/belug-apps/belug-apps/compare/v0.6.0-rc.2...HEAD
-[v0.6.0-rc.2]: https://github.com/belug-apps/belug-apps/compare/v0.5.4...v0.6.0-rc.2
+[Unreleased]: https://github.com/belug-apps/belug-apps/compare/v0.6.0-rc.3...HEAD
+[v0.6.0-rc.3]: https://github.com/belug-apps/belug-apps/compare/v0.5.4...v0.6.0-rc.3
 [v0.5.4]: https://github.com/belug-apps/belug-apps/compare/v0.5.3...v0.5.4
 [v0.5.3]: https://github.com/belug-apps/belug-apps/compare/v0.5.2...v0.5.3
 [v0.5.2]: https://github.com/belug-apps/belug-apps/compare/v0.5.1...v0.5.2
