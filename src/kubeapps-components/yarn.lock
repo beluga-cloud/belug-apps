@@ -981,10 +981,10 @@
     "@cds/city" "^1.1.0"
     modern-normalize "1.1.0"
 
-"@cds/react@6.2.0":
-  version "6.2.0"
-  resolved "https://registry.yarnpkg.com/@cds/react/-/react-6.2.0.tgz#f8da634e6cb3807c435bd3d7d5061d6f1ab21b40"
-  integrity sha512-qGLS38/j660ku5TOMMZKDH14jM93AKJqJL5snsBA5e5srTU6+8CiA6z2oJmxFaX13nugS4nIm4RmEvbYCL9ntg==
+"@cds/react@6.2.3":
+  version "6.2.3"
+  resolved "https://registry.yarnpkg.com/@cds/react/-/react-6.2.3.tgz#fb45addf278319c113a0247310561ef6aa8c4f52"
+  integrity sha512-L9BHn93H53vPSG/DpGjvAxREHmIE0OEuGmtECNkn5T776hSFoAyRoyrCd1AXahOR1dVyNENP4hVPbyywKhP9RA==
   dependencies:
     "@lit-labs/react" "^1.0.8"
   optionalDependencies:
