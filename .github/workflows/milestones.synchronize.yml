@@ -29,7 +29,7 @@ jobs:
               --output - \
               <(echo "${{ steps.app_auth.outputs.token }}") \
             | base64 -w0
-          ) >> ${GITHUB_OUTPUT}
+          ) >> "${GITHUB_OUTPUT}"
 
   list_milestones:
     name: List milestones on '${{ github.repository }}'
@@ -47,7 +47,7 @@ jobs:
               -H "Accept: application/vnd.github+json" \
               "https://api.github.com/repos/${{ github.repository }}/milestones?direction=asc&sort=title" \
             | jq 'map({title, number, state, description, due_on} | with_entries(select(.value != null)))' --compact-output
-          ) >> ${GITHUB_OUTPUT}
+          ) >> "${GITHUB_OUTPUT}"
 
   # NOTE: jobs used to trigger milestone synchronization on every repositories
   list_repositories:
@@ -66,7 +66,7 @@ jobs:
                 -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
                 https://api.github.com/orgs/${{ github.repository_owner }}/repos?per_page=100 \
             | jq '[.[].full_name] | map(select(. != "${{ github.repository }}"))' --compact-output
-          ) >> ${GITHUB_OUTPUT}
+          ) >> "${GITHUB_OUTPUT}"
   trigger-sync-everywhere:
     name: Trigger synchronization on each '${{ github.repository_owner }}' repositories
     needs:
@@ -87,7 +87,7 @@ jobs:
               --passphrase "${{ secrets.GPG_SECRET_SIGNING_PASSPHRASE }}" \
               --output - \
               <(echo "${{ needs.app_auth.outputs.token }}" | base64 --decode)
-          ) >> ${GITHUB_OUTPUT}
+          ) >> "${GITHUB_OUTPUT}"
       - uses: peter-evans/repository-dispatch@26b39ed245ab8f31526069329e112ab2fb224588 # v2.1.1
         with:
           client-payload: '{"milestones":${{needs.list_milestones.outputs.milestones}}}'
@@ -117,11 +117,11 @@ jobs:
                 | (([.[1][].title]) - ([.[0][].title])) as $new
                 | .[1]
                 | map(
-                  select(.title as $title | $new | any(. == $title)) 
+                  select(.title as $title | $new | any(. == $title))
                   | del(.number)
                 )
             '  --compact-output
-          ) >> ${GITHUB_OUTPUT}
+          ) >> "${GITHUB_OUTPUT}"
   add_milestones:
     name: Create missing milestones `${{ matrix.milestone.title }}`
     if: ${{ needs.list_missing_milestones.outputs.milestones != '[]' }}
@@ -144,7 +144,7 @@ jobs:
               --passphrase "${{ secrets.GPG_SECRET_SIGNING_PASSPHRASE }}" \
               --output - \
               <(echo "${{ needs.app_auth.outputs.token }}" | base64 --decode)
-          ) >> ${GITHUB_OUTPUT}
+          ) >> "${GITHUB_OUTPUT}"
       - name: Create missing milestones `${{ matrix.milestone.title }}`
         run: |
           curl --silent -X POST \
@@ -180,7 +180,7 @@ jobs:
                   | {title, number}
                 )
             ' --compact-output
-          ) >> ${GITHUB_OUTPUT}
+          ) >> "${GITHUB_OUTPUT}"
   remove_milestones:
     name: Delete removed milestones `${{ matrix.milestone.title }}`
     if: ${{ needs.list_removed_milestones.outputs.milestones != '[]' }}
@@ -204,7 +204,7 @@ jobs:
               --passphrase "${{ secrets.GPG_SECRET_SIGNING_PASSPHRASE }}" \
               --output - \
               <(echo "${{ needs.app_auth.outputs.token }}" | base64 --decode)
-          ) >> ${GITHUB_OUTPUT}
+          ) >> "${GITHUB_OUTPUT}"
       - name: Delete removed milestones `${{ matrix.milestone.title }}`
         run: |
           curl --silent -X DELETE \
@@ -238,7 +238,7 @@ jobs:
                   | map(select((.[0] | del(.number)) != (.[1] | del(.number))))
                   | map(.[1] + {number: .[0].number})
             '  --compact-output
-          ) >> ${GITHUB_OUTPUT}
+          ) >> "${GITHUB_OUTPUT}"
   update_milestones:
     name: Synchronize unsynced milestones `${{ matrix.milestone.title }}`
     if: ${{ needs.list_unsynced_milestones.outputs.milestones != '[]' }}
@@ -262,7 +262,7 @@ jobs:
               --passphrase "${{ secrets.GPG_SECRET_SIGNING_PASSPHRASE }}" \
               --output - \
               <(echo "${{ needs.app_auth.outputs.token }}" | base64 --decode)
-          ) >> ${GITHUB_OUTPUT}
+          ) >> "${GITHUB_OUTPUT}"
       - name: Synchronize unsynced milestones `${{ matrix.milestone.title }}`
         run: |
           curl -X PATCH \
