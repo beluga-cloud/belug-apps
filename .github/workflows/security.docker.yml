@@ -37,6 +37,6 @@ jobs:
         with:
           image: ghcr.io/belug-apps/api-proxy:snyk-${{ github.run_id }}
           args: --file=./src/api-proxy/Dockerfile
-      - uses: github/codeql-action/upload-sarif@0a3f985290ed05d660eccad9acadea7a461a4aa8 # tag=codeql-bundle-20221024
+      - uses: github/codeql-action/upload-sarif@579411fb6c2fa885902ffeb0238873661aa2dc29 # tag=codeql-bundle-20221024
         with:
           sarif_file: snyk.sarif
