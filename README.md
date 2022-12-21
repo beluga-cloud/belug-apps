@@ -1,7 +1,7 @@
 <!-- markdownlint-disable MD033 -->
 <h1 align="center">
   <a href="https://github.com/belug-apps">
-    <img src="assets/logo_400px.png" alt="Logo" width="150" height="150">
+    <img src="https://github.com/belug-apps/.github/raw/main/assets/logo_400px.png" alt="Logo" width="150" height="150">
   </a>
 </h1>
 
