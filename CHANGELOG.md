@@ -3,9 +3,10 @@
 
 
 
-<a name="v0.6.0-rc.4"></a>
-## [v0.6.0-rc.4] - 2022-12-21
+<a name="v0.6.0-rc.5"></a>
+## [v0.6.0-rc.5] - 2022-12-21
 ### Dependencies
+- **deps:** Update actions/stale action to v7
 - **deps:** Update github/codeql-action digest to 579411f
 - **deps:** Update actions/checkout action to v3.2.0
 - **deps:** Update github/codeql-action digest to 0a3f985
@@ -23,6 +24,7 @@
 - **milestones:** add milestones sync workflow
 
 ### Pull Requests
+- Merge pull request [#100](https://github.com/belug-apps/belug-apps/issues/100) from belug-apps/renovate/actions-stale-7.x
 - Merge pull request [#99](https://github.com/belug-apps/belug-apps/issues/99) from belug-apps/renovate/github-codeql-action-digest
 - Merge pull request [#98](https://github.com/belug-apps/belug-apps/issues/98) from belug-apps/renovate/github-actions
 - Merge pull request [#95](https://github.com/belug-apps/belug-apps/issues/95) from belug-apps/renovate/github-codeql-action-digest
@@ -274,8 +276,8 @@
 <a name="v0.0.0"></a>
 ## v0.0.0 - 2022-10-22
 
-[Unreleased]: https://github.com/belug-apps/belug-apps/compare/v0.6.0-rc.4...HEAD
-[v0.6.0-rc.4]: https://github.com/belug-apps/belug-apps/compare/v0.5.4...v0.6.0-rc.4
+[Unreleased]: https://github.com/belug-apps/belug-apps/compare/v0.6.0-rc.5...HEAD
+[v0.6.0-rc.5]: https://github.com/belug-apps/belug-apps/compare/v0.5.4...v0.6.0-rc.5
 [v0.5.4]: https://github.com/belug-apps/belug-apps/compare/v0.5.3...v0.5.4
 [v0.5.3]: https://github.com/belug-apps/belug-apps/compare/v0.5.2...v0.5.3
 [v0.5.2]: https://github.com/belug-apps/belug-apps/compare/v0.5.1...v0.5.2
