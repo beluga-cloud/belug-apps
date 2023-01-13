@@ -11,7 +11,7 @@ jobs:
   check_helm_issue:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # v3.2.0
+      - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
       - uses: tenable/terrascan-action@dd7e921056c6f25b25bff3cf791e063ed7fc3a78 # tag=v1.5.0
         continue-on-error: true
         with:
