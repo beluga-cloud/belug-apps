@@ -20,6 +20,6 @@ jobs:
           iac_type: helm
           iac_version: v3
           sarif_upload: true
-      - uses: github/codeql-action/upload-sarif@579411fb6c2fa885902ffeb0238873661aa2dc29 # tag=codeql-bundle-20221024
+      - uses: github/codeql-action/upload-sarif@32be38eeffb2f4ae668081106bdd999e1f786b3d # tag=codeql-bundle-20221024
         with:
           sarif_file: terrascan.sarif
